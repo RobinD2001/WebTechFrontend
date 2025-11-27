@@ -1,10 +1,12 @@
 <script setup>
-	import { ref, reactive, compile } from "vue";
+	import { ref, reactive, computed } from "vue";
 	import Cell from "@/components/xw/Cell.vue";
 	import CluesWrapper from "@/components/xw/CluesWrapper.vue";
+	import WinnerModal from "./WinnerModal.vue";
 
 	const gridSize = reactive({ rows: 0, cols: 0 });
-	const grid = ref([]); // 2D array of cell objects
+	const grid = ref([]);
+	const showWinner = ref(false);
 
 	const curCell = reactive({ row: -1, col: -1 });
 	const nextCell = reactive({ row: -1, col: -1 });
@@ -13,11 +15,16 @@
 	const selectedAcrossId = ref(null);
 	const selectedDownId = ref(null);
 
+	const props = defineProps({
+		date: Number,
+	});
+
 	function setGrid(payload) {
 		gridSize.rows = payload.size.rows;
 		gridSize.cols = payload.size.cols;
 
 		const { clueNumbers, acrossIds, downIds } = payload;
+		console.log(payload);
 
 		grid.value = Array.from({ length: gridSize.rows }, (_, r) =>
 			Array.from({ length: gridSize.cols }, (_, c) => {
@@ -42,6 +49,11 @@
 
 	function updateCellValue(row, col, newValue) {
 		grid.value[row][col].value = newValue;
+		checkValidation();
+	}
+
+	function checkValidation() {
+		return grid.value;
 	}
 
 	function updateCellSelection(newRow, newCol) {
@@ -61,8 +73,6 @@
 		}
 
 		let clueId = downSelected.value ? cell.downClueId : cell.acrossClueId;
-
-		console.log(cell, clueId);
 
 		if (clueId == null) {
 			clueId = !downSelected.value ? cell.downClueId : cell.acrossClueId;
@@ -120,8 +130,6 @@
 		}
 
 		if (first) {
-			console.log(first);
-
 			curCell.row = first.row;
 			curCell.col = first.col;
 			for (let r = 0; r < gridSize.rows; r++) {
@@ -165,11 +173,8 @@
 		}
 	}
 
-	function handleTyped(row, col, info) {
-		//console.log(info);
-
+	function handleTyped(row, col) {
 		const step = 1;
-		//if (row < 0 || col < 0 || info.previous) return;
 
 		const rows = gridSize.rows;
 		const cols = gridSize.cols;
@@ -188,9 +193,8 @@
 		if (r < 0 || r >= rows || c < 0 || c >= cols) return;
 
 		const nextCell = grid.value[r][c];
-		const belongs = true; //isDown ? nextCell.downClueId === clueId : nextCell.acrossClueId === clueId;
 
-		if (!belongs || nextCell.isBlock) return null;
+		if (nextCell.isBlock) return null;
 
 		updateCellSelection(r, c);
 		return;
@@ -198,7 +202,7 @@
 
 	function handleArrowKey(row, col, key) {
 		const cell = grid.value[row][col];
-		console.log(curCell);
+		//console.log(curCell);
 
 		const isDownAxis = key === "ArrowUp" || key === "ArrowDown";
 		const isCurrentDown = downSelected.value;
@@ -262,9 +266,7 @@
 		if (r < 0 || r >= rows || c < 0 || c >= cols) return null;
 
 		const cell = grid.value[r][c];
-		const belongs = isDown ? cell.downClueId === clueId : cell.acrossClueId === clueId;
-
-		if (!belongs || cell.isBlock) return null;
+		if (cell.isBlock) return null;
 
 		return { row: r, col: c };
 	}
@@ -283,6 +285,10 @@
 			}
 		}
 		grid.value[row][col].value = "";
+	}
+
+	function handleCrosswordSolved() {
+		showWinner.value = true;
 	}
 </script>
 
@@ -309,8 +315,13 @@
 			<CluesWrapper
 				:selectedDownId="selectedDownId"
 				:selectedAcrossId="selectedAcrossId"
+				:date="props.date"
+				:grid="checkValidation()"
 				@grid-calculated="setGrid"
-				@clueSelected="handleClueSelected" />
+				@clueSelected="handleClueSelected"
+				@crosswordSolved="handleCrosswordSolved" />
 		</BRow>
+		{{ showWinner }}
 	</BContainer>
+	<WinnerModal v-model="showWinner" />
 </template>

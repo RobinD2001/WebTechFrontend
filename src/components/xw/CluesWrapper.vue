@@ -1,131 +1,137 @@
 <script setup>
+	import { ref, watch } from "vue";
 	import ClueList from "@/components/xw/ClueList.vue";
-	import { reactive } from "vue";
-
-	const gridSize = reactive({ x: 4, y: 4 });
+	import { getXWFromDate } from "@/composables/getXW.js";
 
 	const props = defineProps({
 		selectedDownId: Number,
 		selectedAcrossId: Number,
+		date: Number,
+		grid: Array,
 	});
-	const emit = defineEmits(["gridCalculated", "clueSelected"]);
+	const emit = defineEmits(["gridCalculated", "clueSelected", "crosswordSolved"]);
 
-	const allClues = reactive([
-		{ id: 0, x: 0, y: 0, length: 3, body: "Place for relaxation", across: true },
-		{ id: 0, x: 0, y: 2, length: 4, body: "... Legends", across: true },
-		{ id: 0, x: 1, y: 0, length: 4, body: "Leader of church", across: false },
-		{ id: 0, x: 0, y: 0, length: 4, body: "Marvel founder Lee", across: false },
-		{ id: 0, x: 3, y: 1, length: 3, body: "Tool of a lumberjack", across: false },
-	]);
+	const clues = ref([]);
+	const clueChecks = ref([]);
 
-	const acrossClues = reactive([]);
-	const downClues = reactive([]);
+	async function loadClues(date) {
+		try {
+			const dateFormatted = new Date(date);
 
-	function setIds() {
-		allClues.sort((a, b) => a.y * gridSize.x + a.x - (b.y * gridSize.x + b.x));
-
-		let sameCellClues = 0;
-		for (let i = 0; i < allClues.length; i++) {
-			allClues[i].id = i - sameCellClues;
-
-			if (
-				i > 0 &&
-				allClues[i].x === allClues[i - 1].x &&
-				allClues[i].y === allClues[i - 1].y
-			) {
-				allClues[i].id--;
-				sameCellClues++;
-			}
-
-			const clueNumber = allClues[i].id + 1;
-
-			if (allClues[i].across) {
-				acrossClues.push({ id: clueNumber, body: allClues[i].body });
-			} else {
-				downClues.push({ id: clueNumber, body: allClues[i].body });
-			}
+			clues.value = await getXWFromDate(dateFormatted);
+		} catch (e) {
+			console.error("Error while getting Crossword data: ", e);
+			clues.value = [];
 		}
 	}
-	setIds();
 
-	function computeGrid() {
-		const rows = gridSize.y;
-		const cols = gridSize.x;
+	watch(
+		() => props.date,
+		(date) => {
+			if (!date) {
+				clues.value = [];
+				console.error("No date supplied!");
+				return;
+			}
 
-		const clueNumberGrid = [];
-		const acrossIdGrid = [];
-		const downIdGrid = [];
+			loadClues(date);
+		},
+		{ immediate: true }
+	);
 
-		for (let r = 0; r < rows; r++) {
-			clueNumberGrid.push(Array(cols).fill(0));
-			acrossIdGrid.push(Array(cols).fill(null));
-			downIdGrid.push(Array(cols).fill(null));
-		}
+	function getClueKey(isAcross, id) {
+		return `${isAcross ? "across" : "down"}-${id}`;
+	}
 
-		for (const clue of allClues) {
-			const clueNumber = clue.id + 1;
-			const { x, y, length, across } = clue;
+	function aggregateValues(grid) {
+		const aggregated = {};
 
-			clueNumberGrid[y][x] = clueNumber;
+		//if (!Array.isArray(grid)) return aggregated;
 
-			if (across) {
-				for (let dx = 0; dx < length; dx++) {
-					acrossIdGrid[y][x + dx] = clue.id + 1;
+		for (const row of grid) {
+			//if (!Array.isArray(row)) continue;
+
+			for (const cell of row) {
+				if (!cell || cell.isBlock) continue;
+
+				if (cell.acrossClueId != null) {
+					const key = getClueKey(true, cell.acrossClueId);
+					aggregated[key] = (aggregated[key] ?? "") + (cell.value ?? "");
 				}
-			} else {
-				for (let dy = 0; dy < length; dy++) {
-					downIdGrid[y + dy][x] = clue.id + 1;
+
+				if (cell.downClueId != null) {
+					const key = getClueKey(false, cell.downClueId);
+					aggregated[key] = (aggregated[key] ?? "") + (cell.value ?? "");
 				}
 			}
 		}
 
-		emit("gridCalculated", {
-			size: { rows, cols },
-			clueNumbers: clueNumberGrid,
-			acrossIds: acrossIdGrid,
-			downIds: downIdGrid,
+		return aggregated;
+	}
+
+	function validateGrid(grid) {
+		if (!grid || grid.length === 0 || clues.value.length === 0) {
+			clueChecks.value = [];
+			return;
+		}
+
+		const filledByKey = aggregateValues(grid);
+
+		const results = clues.value.map((clue) => {
+			const key = getClueKey(clue.is_across, clue.start_number);
+			const answer = (clue.answer ?? "").toUpperCase();
+			const filled = (filledByKey[key] ?? "").toUpperCase();
+			const isComplete = filled.length === answer.length && answer.length > 0;
+
+			return {
+				id: clue.start_number,
+				isAcross: clue.is_across,
+				answer,
+				filled,
+				matches: isComplete && filled === answer,
+			};
 		});
-	}
-	computeGrid();
 
-	function setClue(c, downSelected) {
-		emit("clueSelected", { down: downSelected, id: c.id });
+		clueChecks.value = results;
+		let finished = true;
+		for (const clue of clueChecks.value) {
+			if (!clue.matches) finished = false;
+		}
+		if (finished) {
+			emit("crosswordSolved");
+		}
+
+		console.table(
+			results.map((r) => ({
+				clue: `${r.isAcross ? "A" : "D"}${r.id}`,
+				filled: r.filled,
+				answer: r.answer,
+				matches: r.matches,
+			}))
+		);
+	}
+
+	watch(
+		[() => props.grid, () => clues.value],
+		([grid]) => {
+			validateGrid(grid);
+		},
+		{ immediate: true, deep: true }
+	);
+
+	function setGrid(payload) {
+		emit("gridCalculated", payload);
+	}
+	function handleClueSelected(payload) {
+		emit("clueSelected", payload);
 	}
 </script>
 
 <template>
-	<BCol id="xw_clues">
-		<BRow class="mb-5">
-			<BListGroup>
-				<BListGroupItem>
-					<h3>Across</h3>
-				</BListGroupItem>
-				<BListGroupItem
-					@click="setClue(clue, false)"
-					v-for="clue in acrossClues"
-					:class="{
-						'bg-warning': props.selectedAcrossId == clue.id,
-						'cursor-pointer': true,
-					}">
-					<strong>{{ clue.id }}.</strong> {{ clue.body }}
-				</BListGroupItem>
-			</BListGroup>
-		</BRow>
-		<BRow>
-			<BListGroup>
-				<BListGroupItem>
-					<h3>Down</h3>
-				</BListGroupItem>
-				<BListGroupItem
-					@click="setClue(clue, true)"
-					v-for="clue in downClues"
-					:class="{
-						'bg-warning': props.selectedDownId == clue.id,
-						'cursor-pointer': true,
-					}">
-					<strong>{{ clue.id }}.</strong> {{ clue.body }}
-				</BListGroupItem>
-			</BListGroup>
-		</BRow>
-	</BCol>
+	<ClueList
+		:selectedDownId="props.selectedDownId"
+		:selectedAcrossId="props.selectedAcrossId"
+		:clues="clues"
+		@grid-calculated="setGrid"
+		@clueSelected="handleClueSelected" />
 </template>

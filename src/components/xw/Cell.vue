@@ -22,8 +22,7 @@
 		},
 		set(val) {
 			const prev = props.cell.value;
-			const raw = val || "";
-			const next = raw.slice(-1).toUpperCase(); // always keep most recent character
+			const next = val || "";
 			emit("update:value", next);
 			// Only treat as a "typed" action when something is entered
 			if (next) {
