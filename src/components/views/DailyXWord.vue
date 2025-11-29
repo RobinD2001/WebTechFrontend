@@ -2,7 +2,7 @@
 	import CrosswordApp from "@/components/xw/CrosswordApp.vue";
 	import { computed } from "vue";
 	const today = computed(() => {
-		return new Date().toLocaleString().substring(0, 10);
+		return new Date().toLocaleString("en-US").substring(0, 10);
 	});
 </script>
 
