@@ -72,8 +72,8 @@
 		return {
 			"text-center": true,
 			"xw-cell-input": true,
-			"bg-warning": props.cell.isHighlighted,
-			"bg-info": isSelected.value,
+			"xw-cell-highlighted": props.cell.isHighlighted,
+			"bg-warning": isSelected.value,
 		};
 	});
 
@@ -116,6 +116,9 @@
 		font-size: 5.25rem;
 		caret-color: transparent;
 		cursor: pointer;
+	}
+	.xw-cell-highlighted {
+		background-color: lightblue;
 	}
 
 	.xw-cell-clue {

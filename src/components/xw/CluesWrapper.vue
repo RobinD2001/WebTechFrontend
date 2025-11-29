@@ -1,12 +1,12 @@
 <script setup>
 	import { ref, watch } from "vue";
 	import ClueList from "@/components/xw/ClueList.vue";
-	import { getXWFromDate } from "@/composables/getXW.js";
+	import { getXWFromDate } from "@/composables/useXW.js";
 
 	const props = defineProps({
 		selectedDownId: Number,
 		selectedAcrossId: Number,
-		date: Number,
+		date: String,
 		grid: Array,
 	});
 	const emit = defineEmits(["gridCalculated", "clueSelected", "crosswordSolved"]);
@@ -16,9 +16,10 @@
 
 	async function loadClues(date) {
 		try {
-			const dateFormatted = new Date(date);
+			//const dateFormatted = new Date(date);
+			console.log(date);
 
-			clues.value = await getXWFromDate(dateFormatted);
+			clues.value = await getXWFromDate(date);
 		} catch (e) {
 			console.error("Error while getting Crossword data: ", e);
 			clues.value = [];
@@ -101,14 +102,14 @@
 			emit("crosswordSolved");
 		}
 
-		console.table(
-			results.map((r) => ({
-				clue: `${r.isAcross ? "A" : "D"}${r.id}`,
-				filled: r.filled,
-				answer: r.answer,
-				matches: r.matches,
-			}))
-		);
+		// console.table(
+		// 	results.map((r) => ({
+		// 		clue: `${r.isAcross ? "A" : "D"}${r.id}`,
+		// 		filled: r.filled,
+		// 		answer: r.answer,
+		// 		matches: r.matches,
+		// 	}))
+		// );
 	}
 
 	watch(

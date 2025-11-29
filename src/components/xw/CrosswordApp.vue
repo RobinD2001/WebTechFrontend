@@ -16,7 +16,7 @@
 	const selectedDownId = ref(null);
 
 	const props = defineProps({
-		date: Number,
+		date: String,
 	});
 
 	function setGrid(payload) {
@@ -321,7 +321,6 @@
 				@clueSelected="handleClueSelected"
 				@crosswordSolved="handleCrosswordSolved" />
 		</BRow>
-		{{ showWinner }}
 	</BContainer>
 	<WinnerModal v-model="showWinner" />
 </template>

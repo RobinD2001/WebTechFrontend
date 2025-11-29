@@ -1,0 +1,14 @@
+// Legacy @import chain retained so Bootswatch theme variables remain in global scope
+// (avoids undefined variable errors while Bootswatch ships non-module builds).
+// Place overrides before bootstrap/bootswatch imports.
+
+@import "bootswatch/dist/sketchy/variables";
+@import "bootstrap/scss/bootstrap";
+@import "bootswatch/dist/sketchy/bootswatch";
+
+$primary: #8d9b40;
+$secondary: #000000;
+$success: #51cf66;
+$danger: #ff6b6b;
+$warning: #0c8526;
+// Optional component tweaks here…

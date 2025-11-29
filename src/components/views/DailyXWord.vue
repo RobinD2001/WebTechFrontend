@@ -2,13 +2,18 @@
 	import CrosswordApp from "@/components/xw/CrosswordApp.vue";
 	import { computed } from "vue";
 	const today = computed(() => {
-		return new Date().setHours(0, 0, 0, 0);
+		return new Date().toLocaleString().substring(0, 10);
 	});
 </script>
 
 <template>
-	<h1>Crossword Demo</h1>
+	<h1>
+		Crossword of the day: {{ new Date(today).getDate() }}.{{ new Date(today).getMonth() }}.{{
+			new Date(today).getFullYear()
+		}}
+	</h1>
 	<br />
+
 	<CrosswordApp :date="today" />
 </template>
 

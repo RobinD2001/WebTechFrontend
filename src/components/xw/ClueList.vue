@@ -139,7 +139,7 @@
 					@click="setClue(clue, false)"
 					v-for="clue in acrossClues"
 					:class="{
-						'bg-warning': props.selectedAcrossId == clue.start_number,
+						highlighted: props.selectedAcrossId == clue.start_number,
 						'cursor-pointer': true,
 					}">
 					<strong>{{ clue.start_number }}.</strong> {{ clue.question }}
@@ -155,7 +155,7 @@
 					@click="setClue(clue, true)"
 					v-for="clue in downClues"
 					:class="{
-						'bg-warning': props.selectedDownId == clue.start_number,
+						highlighted: props.selectedDownId == clue.start_number,
 						'cursor-pointer': true,
 					}">
 					<strong>{{ clue.start_number }}.</strong> {{ clue.question }}
@@ -168,5 +168,9 @@
 <style scoped>
 	.cursor-pointer {
 		cursor: pointer;
+	}
+
+	.highlighted {
+		background-color: lightblue;
 	}
 </style>
