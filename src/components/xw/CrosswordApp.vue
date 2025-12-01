@@ -1,12 +1,18 @@
 <script setup>
-	import { ref, reactive, computed } from "vue";
+	import { ref, reactive, computed, onMounted, onBeforeUnmount, watch } from "vue";
 	import Cell from "@/components/xw/Cell.vue";
 	import CluesWrapper from "@/components/xw/CluesWrapper.vue";
 	import WinnerModal from "./WinnerModal.vue";
+import { addSolve } from "@/composables/useXW";
 
 	const gridSize = reactive({ rows: 0, cols: 0 });
 	const grid = ref([]);
 	const showWinner = ref(false);
+	const countdownSeconds = ref(3);
+	const isCountingDown = ref(true);
+	const elapsedMs = ref(0);
+	let countdownInterval = null;
+	let elapsedInterval = null;
 
 	const curCell = reactive({ row: -1, col: -1 });
 	const nextCell = reactive({ row: -1, col: -1 });
@@ -19,12 +25,78 @@
 		date: String,
 	});
 
+	const timerDisplay = computed(() => {
+		if (isCountingDown.value) {
+			return countdownSeconds.value.toString();
+		}
+
+		return new Date(elapsedMs.value).toISOString().substring(11, 19);
+	});
+
+	const timerClass = computed(() => (isCountingDown.value ? "countdown" : "running"));
+
+	function clearIntervals() {
+		if (countdownInterval) {
+			clearInterval(countdownInterval);
+			countdownInterval = null;
+		}
+		if (elapsedInterval) {
+			clearInterval(elapsedInterval);
+			elapsedInterval = null;
+		}
+	}
+
+	function startElapsed() {
+		const startedAt = Date.now();
+		elapsedMs.value = 0;
+		elapsedInterval = setInterval(() => {
+			elapsedMs.value = Date.now() - startedAt;
+		}, 1000);
+	}
+
+	function startCountdown() {
+		clearIntervals();
+		countdownSeconds.value = 3;
+		isCountingDown.value = true;
+
+		countdownInterval = setInterval(() => {
+			countdownSeconds.value -= 1;
+			if (countdownSeconds.value <= 0) {
+				countdownSeconds.value = 0;
+				clearInterval(countdownInterval);
+				countdownInterval = null;
+				isCountingDown.value = false;
+				startElapsed();
+			}
+		}, 1000);
+	}
+
+	function stopTimer() {
+		clearIntervals();
+	}
+
+	onMounted(() => {
+		startCountdown();
+	});
+
+	watch(
+		() => props.date,
+		() => {
+			startCountdown();
+		},
+		{ immediate: false }
+	);
+
+	onBeforeUnmount(() => {
+		clearIntervals();
+	});
+
 	function setGrid(payload) {
 		gridSize.rows = payload.size.rows;
 		gridSize.cols = payload.size.cols;
 
 		const { clueNumbers, acrossIds, downIds } = payload;
-		console.log(payload);
+		//console.log(payload);
 
 		grid.value = Array.from({ length: gridSize.rows }, (_, r) =>
 			Array.from({ length: gridSize.cols }, (_, c) => {
@@ -288,12 +360,19 @@
 	}
 
 	function handleCrosswordSolved() {
+		stopTimer();
 		showWinner.value = true;
+		addSolve(elapsedMs.value, props.date);
 	}
 </script>
 
 <template>
 	<BContainer class="mb-5 crossword-shell">
+		<BRow class="justify-content-end mb-2">
+			<BCol cols="auto">
+				<div class="xw-timer" :class="timerClass" aria-live="polite">{{ timerDisplay }}</div>
+			</BCol>
+		</BRow>
 		<BRow class="g-4">
 			<BCol id="xw_grid" aria-label="Crossword grid container">
 				<BContainer
@@ -341,5 +420,26 @@
 
 	#xw_grid {
 		min-width: 360px;
+	}
+
+	.xw-timer {
+		font-family: var(--font-heading);
+		font-size: 1.25rem;
+		font-weight: 700;
+		padding: 0.35rem 0.9rem;
+		border-radius: 12px;
+		border: 2px solid var(--border);
+		background: var(--card);
+		min-width: 96px;
+		text-align: center;
+		transition: color 150ms ease;
+	}
+
+	.xw-timer.countdown {
+		color: #c62828;
+	}
+
+	.xw-timer.running {
+		color: var(--accent-strong);
 	}
 </style>

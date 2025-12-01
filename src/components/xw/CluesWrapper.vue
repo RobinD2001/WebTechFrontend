@@ -16,8 +16,7 @@
 
 	async function loadClues(date) {
 		try {
-			//const dateFormatted = new Date(date);
-			console.log(date);
+			//console.log(date);
 
 			clues.value = await getXWFromDate(date);
 		} catch (e) {

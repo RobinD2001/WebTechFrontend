@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import CrosswordApp from "@/components/xw/CrosswordApp.vue";
+import { getXWInfo } from "@/composables/useXW";
 
 const today = new Date();
 const yesterday = new Date(today);
@@ -9,10 +10,16 @@ yesterday.setDate(today.getDate() - 1);
 const yesterdayString = yesterday.toISOString().slice(0, 10);
 
 const selectedDate = ref(yesterdayString);
-const currentPuzzle = ref(yesterdayString);
+const currentPuzzleDate = ref(yesterdayString);
 
-const loadPuzzle = () => {
-	currentPuzzle.value = selectedDate.value;
+const difficulty = ref("---");
+const averageTime = ref("0:00");
+
+const loadPuzzle = async () => {
+	currentPuzzleDate.value = selectedDate.value;
+	const info = await getXWInfo(currentPuzzleDate.value);
+	difficulty.value = info?.difficulty ?? "unknown";
+    averageTime.value = info?.avgTime ?? "99:99";
 };
 </script>
 
@@ -42,26 +49,24 @@ const loadPuzzle = () => {
 					<BCol md="4" class="text-md-end stats mb-3">
 						<div class="stat">
 							<span class="label">Difficulty</span>
-							<strong>{{ currentPuzzle?.difficulty }}</strong>
+							<strong>{{ difficulty }}</strong>
 						</div>
 						<div class="stat">
 							<span class="label">Average time</span>
-							<strong>{{ currentPuzzle?.avgTime }}</strong>
+							<strong>{{ averageTime }}</strong>
 						</div>
 					</BCol>
 				</BRow>
 			</BForm>
 		</BCard>
 
-		<BCard class="panel puzzle-card" v-if="currentPuzzle">
+		<BCard class="panel puzzle-card" v-if="currentPuzzleDate">
 			<div class="header">
 				<div>
-					<p class="eyebrow mb-1">Selected puzzle</p>
-					<h3 class="mb-0">{{ currentPuzzle.title }}</h3>
-					<p class="muted mb-0">Loaded from {{ selectedDate }}</p>
+					<p class="muted mb-0">Loaded from {{ currentPuzzleDate }}</p>
 				</div>
 			</div>
-			<CrosswordApp :date="selectedDate"></CrosswordApp>
+			<CrosswordApp :date="currentPuzzleDate"></CrosswordApp>
 		</BCard>
 	</BContainer>
 </template>

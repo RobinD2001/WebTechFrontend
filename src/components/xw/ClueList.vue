@@ -69,7 +69,7 @@
 			acrossIdGrid.push(Array(cols).fill(null));
 			downIdGrid.push(Array(cols).fill(null));
 		}
-		console.log(acrossIdGrid);
+		//console.log(acrossIdGrid);
 
 		for (const clue of allClues.value) {
 			const { row, col, question, answer, is_across, start_number } = clue;
