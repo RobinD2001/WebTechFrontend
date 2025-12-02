@@ -7,6 +7,7 @@ import Profile from "@/components/views/Profile.vue";
 import Admin from "@/components/views/Admin.vue";
 import Leaderboard from "@/components/views/Leaderboard.vue";
 import HowTo from "@/components/views/HowTo.vue";
+import NotFound from "@/components/layout/NotFound.vue";
 
 const routes = [
 	{
@@ -23,6 +24,17 @@ const routes = [
 		path: "/crossword",
 		name: "crossword",
 		component: Archive,
+	},
+	{
+		path: "/crossword/:date",
+		name: "crosswordSelect",
+		component: Archive,
+		props: (route) => ({ date: route.params.date }),
+	},
+	{
+		path: "/random",
+		name: "random",
+		redirect: () => ({ name: "crosswordSelect", params: { date: getRandomDate() } }),
 	},
 	{
 		path: "/profile",
@@ -45,15 +57,24 @@ const routes = [
 		component: Admin,
 		meta: { requiresAuth: true },
 	},
+	{
+		path: "/404",
+		name: "404",
+		component: NotFound,
+	},
+	{
+		path: "/:catchAll(.*)*",
+		redirect: { name: "404" },
+	},
 ];
 
 const router = createRouter({
 	history: createWebHistory(),
 	routes,
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) return savedPosition;
-    return { left: 0, top: 0 }; // scroll to top on each route change
-  },
+	scrollBehavior(to, from, savedPosition) {
+		if (savedPosition) return savedPosition;
+		return { left: 0, top: 0 };
+	},
 });
 
 router.beforeEach((to, from) => {
@@ -64,5 +85,9 @@ router.beforeEach((to, from) => {
 
 	return true;
 });
+
+const getRandomDate = () => {
+	return "2025-11-29";
+};
 
 export default router;

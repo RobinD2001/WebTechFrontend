@@ -1,50 +1,72 @@
 <script setup>
-import { ref } from "vue";
-import CrosswordApp from "@/components/xw/CrosswordApp.vue";
-import { getXWInfo } from "@/composables/useXW";
+	import { ref } from "vue";
+	import CrosswordApp from "@/components/xw/CrosswordApp.vue";
+	import { getXWInfo } from "@/composables/useXW";
 
-const today = new Date();
-const yesterday = new Date(today);
-yesterday.setDate(today.getDate() - 1);
+	const props = defineProps({
+		date: String,
+	});
 
-const yesterdayString = yesterday.toISOString().slice(0, 10);
+	const today = new Date();
+	const yesterday = new Date(today);
+	yesterday.setDate(today.getDate() - 1);
+	const yesterdayString = yesterday.toISOString().slice(0, 10);
 
-const selectedDate = ref(yesterdayString);
-const currentPuzzleDate = ref(yesterdayString);
+	const selectedDate = ref(props.date ?? yesterdayString);
+	const currentPuzzleDate = ref(props.date ?? yesterdayString);
 
-const difficulty = ref("---");
-const averageTime = ref("0:00");
+	const difficulty = ref("---");
+	const averageTime = ref("0");
 
-const loadPuzzle = async () => {
-	currentPuzzleDate.value = selectedDate.value;
-	const info = await getXWInfo(currentPuzzleDate.value);
-	difficulty.value = info?.difficulty ?? "unknown";
-    averageTime.value = info?.avgTime ?? "99:99";
-};
+	const fetchInfo = async (date) => {
+		if (!date) return;
+		try {
+			const info = await getXWInfo(date);
+			difficulty.value = info?.difficulty ?? "unknown";
+			averageTime.value = info?.avgTime.substring(2, 4) ?? "99:99";
+		} catch (err) {
+			console.error("Failed to load crossword info", err);
+		}
+	};
+
+	const handleDateBlur = async () => {
+		await fetchInfo(selectedDate.value);
+	};
+
+	const loadPuzzle = async () => {
+		currentPuzzleDate.value = selectedDate.value;
+		await fetchInfo(currentPuzzleDate.value);
+	};
 </script>
 
 <template>
 	<BContainer fluid class="archive-page">
-		<section class="intro">
+		<section class="hero">
 			<h1>Find a past Mini</h1>
-			<p class="lede">Pick a date to load that day's mini crossword.</p>
+			<p class="tagline">Pick a date to load that day's mini crossword.</p>
 		</section>
 
 		<BCard class="panel">
 			<BForm @submit.prevent="loadPuzzle">
 				<BRow class="gy-2 gx-3 align-items-end">
 					<BCol md="4">
-						<BFormGroup label="Puzzle date" label-for="archive-date" label-class="fw-bold">
+						<BFormGroup
+							label="Puzzle date"
+							label-for="archive-date"
+							label-class="fw-bold">
 							<BFormInput
 								id="archive-date"
 								type="date"
 								v-model="selectedDate"
 								:max="today.toISOString().slice(0, 10)"
-								required />
+								required
+								@blur="handleDateBlur" />
 						</BFormGroup>
 					</BCol>
 					<BCol md="2" class="mb-3 mx-3">
-						<BButton type="submit" variant="primary" class="w-100">Load crossword</BButton>
+						<BButton type="submit" variant="primary" class="w-100"
+							>Load crossword</BButton
+						>
 					</BCol>
 					<BCol md="4" class="text-md-end stats mb-3">
 						<div class="stat">
@@ -53,7 +75,7 @@ const loadPuzzle = async () => {
 						</div>
 						<div class="stat">
 							<span class="label">Average time</span>
-							<strong>{{ averageTime }}</strong>
+							<strong>{{ averageTime }}s</strong>
 						</div>
 					</BCol>
 				</BRow>
@@ -72,106 +94,42 @@ const loadPuzzle = async () => {
 </template>
 
 <style scoped>
-.archive-page {
-	max-width: 960px;
-	margin: 0 auto;
-    padding: 0;
-	display: flex;
-	flex-direction: column;
-	gap: 1.25rem;
-}
-
-.intro {
-	text-align: center;
-	display: flex;
-	flex-direction: column;
-	gap: 0.4rem;
-}
-
-.eyebrow {
-	margin: 0;
-	font-weight: 700;
-	text-transform: uppercase;
-	letter-spacing: 0.08em;
-	font-size: 0.75rem;
-	color: var(--accent-strong);
-}
-
-.lede {
-	margin: 0;
-	font-size: 1.05rem;
-}
-
-.panel {
-	border: 1px solid var(--border);
-	border-radius: 10px;
-	background: var(--card);
-	box-shadow: var(--shadow);
-}
-
-.stats {
-	display: flex;
-	gap: 1.5rem;
-	justify-content: flex-end;
-}
-
-.stat .label {
-	display: block;
-	font-size: 0.85rem;
-	color: var(--muted);
-}
-
-.stat strong {
-	color: var(--accent);
-}
-
-.puzzle-card .header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 1rem;
-	margin-bottom: 1rem;
-}
-
-.muted {
-	color: var(--muted);
-}
-
-.grid {
-	display: grid;
-	grid-template-rows: repeat(5, 1fr);
-	gap: 4px;
-	padding: 10px;
-	border: 1px solid var(--border);
-	background: var(--bg-alt);
-	border-radius: 8px;
-}
-
-.grid-row {
-	display: grid;
-	grid-template-columns: repeat(5, 1fr);
-	gap: 4px;
-}
-
-.cell {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: #fdfaf3;
-	border: 1px solid var(--border);
-	font-weight: 700;
-	min-height: 48px;
-	border-radius: 4px;
-}
-
-.cell.block {
-	background: #262626;
-	border-color: #1c1c1c;
-}
-
-@media (max-width: 768px) {
-	.stats {
-		justify-content: flex-start;
+	.archive-page {
+		max-width: 960px;
+		margin: 0 auto;
+		padding: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
 	}
-}
+
+	.stats {
+		display: flex;
+		gap: 1.5rem;
+		justify-content: flex-end;
+	}
+
+	.stat .label {
+		display: block;
+		font-size: 0.85rem;
+		color: var(--muted);
+	}
+
+	.stat strong {
+		color: var(--accent);
+	}
+
+	.puzzle-card .header {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	@media (max-width: 768px) {
+		.stats {
+			justify-content: flex-start;
+		}
+	}
 </style>

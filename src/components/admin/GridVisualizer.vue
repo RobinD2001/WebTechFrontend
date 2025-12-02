@@ -74,36 +74,36 @@
 
 	.cell-card {
 		width: 100%;
-		height: 100%;
 		aspect-ratio: 1 / 1;
 		position: relative;
 		border: 1px solid #ccc;
 		display: flex;
 		align-items: stretch;
+		overflow: hidden;
 	}
 
 	.cell-card .card-body {
-		flex: 1 1 auto;
+		width: 100%;
+		height: 100%;
+		display: grid;
+		place-items: center;
 		position: relative;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0.25rem;
+		padding: 0.35rem;
 	}
 
 	.cell-letter {
 		font-weight: 800;
-		font-size: 4.35rem;
+		font-size: clamp(1.2rem, 3vw, 2rem);
 		text-transform: uppercase;
-		position: relative;
-		bottom: -0.35em;
+		line-height: 1;
 	}
 
 	.clue-number {
 		position: absolute;
-		top: 4px;
-		left: 6px;
-		font-size: 1.85rem;
+		top: 6px;
+		left: 8px;
+		font-size: 0.9rem;
 		font-weight: 700;
+		line-height: 1;
 	}
 </style>

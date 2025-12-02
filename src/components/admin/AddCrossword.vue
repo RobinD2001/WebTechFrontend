@@ -6,7 +6,8 @@
 	const clues = ref([]);
 	const today = new Date().toISOString().split("T")[0];
 	const releaseDate = ref(today);
-	const isPublic = ref(false);
+	const visibility = ref("private");
+	const difficulty = ref("Monday");
 	const showAlert = ref(false);
 	const alertVariant = ref("success");
 	const alertMessage = ref("");
@@ -135,7 +136,8 @@
 			const res = await addCrosswordToDB({
 				clues: clues.value,
 				releaseDate: releaseDate.value,
-				isPublic: isPublic.value,
+				visibility: visibility.value,
+				difficulty: difficulty.value,
 			});
 			openAlert("success", res?.message || "Crossword uploaded successfully.");
 			clues.value = [];
@@ -147,7 +149,11 @@
 
 <template>
 	<section class="p-4">
-		<BAlert :model-value="showAlert" :variant="alertVariant" dismissible @dismissed="showAlert = false">
+		<BAlert
+			:model-value="showAlert"
+			:variant="alertVariant"
+			dismissible
+			@dismissed="showAlert = false">
 			{{ alertMessage }}
 		</BAlert>
 		<BListGroup class="mb-4">
@@ -212,8 +218,34 @@
 							<BFormInput v-model="releaseDate" type="date" />
 						</BInputGroup>
 					</BCol>
-					<BCol class="d-flex align-items-center">
-						<BFormCheckbox v-model="isPublic" switch> Public crossword </BFormCheckbox>
+					<BCol>
+						<BFormGroup>
+							<BFormSelect
+								id="visibility-select"
+								v-model="visibility"
+								:options="[
+									{ value: 'private', text: 'Private' },
+									{ value: 'scheduled', text: 'Scheduled' },
+									{ value: 'public', text: 'Public' },
+								]" />
+						</BFormGroup>
+					</BCol>
+				</BRow>
+				<BRow class="mb-3">
+					<BCol>
+						<BFormGroup label="Difficulty (day of week)">
+							<BFormSelect
+								v-model="difficulty"
+								:options="[
+									'Monday',
+									'Tuesday',
+									'Wednesday',
+									'Thursday',
+									'Friday',
+									'Saturday',
+									'Sunday',
+								]" />
+						</BFormGroup>
 					</BCol>
 				</BRow>
 			</BForm>

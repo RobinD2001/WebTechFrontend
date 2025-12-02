@@ -2,6 +2,7 @@
 	import { ref } from "vue";
 	import AddCrossword from "@/components/admin/AddCrossword.vue";
 	import GlobalStats from "@/components/admin/GlobalStats.vue";
+	import Schedule from "@/components/admin/Schedule.vue";
 	import { BTab, BTabs } from "bootstrap-vue-3";
 
 	const activeContainer = ref(0);
@@ -17,6 +18,9 @@
 			</BTab>
 			<BTab title="Global stats">
 				<GlobalStats />
+			</BTab>
+			<BTab title="Schedule">
+				<Schedule />
 			</BTab>
 		</BTabs>
 	</BContainer>
