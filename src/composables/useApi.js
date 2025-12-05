@@ -44,3 +44,12 @@ export function apiGet(path) {
 		method: "GET",
 	});
 }
+
+export function apiAuth(path, auth) {
+	return apiRequest(path, {
+		method: "GET",
+		headers: {
+			Authorization: auth,
+		},
+	});
+}

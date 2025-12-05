@@ -83,11 +83,14 @@
 		writeJson(STORAGE_KEYS.solves, solves);
 	}
 
-	function handleCrosswordSolved() {
+	async function handleCrosswordSolved() {
 		stopTimer();
 		showWinner.value = true;
-		if (useAuth.isAuthenticated) addSolve(elapsedMs.value, props.date);
-		else persistSolveLocally();
+		if (isAuthenticated.value) {
+			await addSolve(elapsedMs.value, props.date);
+		} else {
+			persistSolveLocally();
+		}
 	}
 </script>
 

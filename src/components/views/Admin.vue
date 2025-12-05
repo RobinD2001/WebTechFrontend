@@ -19,7 +19,7 @@
 		} catch (err) {
 			console.error("Admin check failed", err);
 			isAdmin.value = false;
-			noAccessMsg.value = "Unable to verify admin access.";
+			noAccessMsg.value = err.message;
 		} finally {
 			isCheckingAccess.value = false;
 		}

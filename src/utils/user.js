@@ -12,7 +12,7 @@ export function clearStoredUser() {
 	writeJson(STORAGE_KEYS.user, null);
 }
 
-export function resolveUsername(user = getStoredUser) {
+export function resolveUsername(user = getStoredUser()) {
 	if (!user) return null;
-	return user.username ?? null;
+	return user.name ?? null;
 }

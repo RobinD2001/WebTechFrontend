@@ -1,49 +1,50 @@
 <script setup>
-import { onMounted, ref, computed } from "vue";
-import { useAuth } from "@/composables/useAuth";
-import { getStats } from "@/composables/useStats";
+	import { onMounted, ref, computed } from "vue";
+	import { useAuth } from "@/composables/useAuth";
+	import { getStats } from "@/composables/useStats";
+	import { resolveUsername } from "@/utils/user";
 
-const { logout, user } = useAuth();
+	const { logout, user } = useAuth();
 
-const stats = ref(null);
-const loading = ref(false);
-const error = ref("");
+	const stats = ref(null);
+	const loading = ref(false);
+	const error = ref("");
 
-const statsApi = getStats();
+	const statsApi = getStats();
 
-const username = computed(() => user.value?.username || user.value?.name || "Player");
+	const username = computed(() => resolveUsername(user.value) ?? "Guest");
 
-function formatDate(value) {
-	if (!value) return "—";
-	const date = new Date(value);
-	return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString();
-}
-
-function formatSeconds(value) {
-	if (value === null || value === undefined) return "—";
-	const totalSeconds = Math.round(Number(value));
-	if (!Number.isFinite(totalSeconds)) return "—";
-	const minutes = Math.floor(totalSeconds / 60);
-	const seconds = totalSeconds % 60;
-	return `${minutes}:${String(seconds).padStart(2, "0")}`;
-}
-
-async function loadStats() {
-	loading.value = true;
-	error.value = "";
-	try {
-		stats.value = await statsApi.getUser();
-	} catch (err) {
-		error.value = err?.message || "Failed to load profile stats.";
-		stats.value = null;
-	} finally {
-		loading.value = false;
+	function formatDate(value) {
+		if (!value) return "—";
+		const date = new Date(value);
+		return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString();
 	}
-}
 
-onMounted(() => {
-	loadStats();
-});
+	function formatSeconds(value) {
+		if (value === null || value === undefined) return "—";
+		const totalSeconds = Math.round(Number(value));
+		if (!Number.isFinite(totalSeconds)) return "—";
+		const minutes = Math.floor(totalSeconds / 60);
+		const seconds = totalSeconds % 60;
+		return `${minutes}:${String(seconds).padStart(2, "0")}`;
+	}
+
+	async function loadStats() {
+		loading.value = true;
+		error.value = "";
+		try {
+			stats.value = await statsApi.getUser();
+		} catch (err) {
+			error.value = err?.message || "Failed to load profile stats.";
+			stats.value = null;
+		} finally {
+			loading.value = false;
+		}
+	}
+
+	onMounted(() => {
+		loadStats();
+	});
 </script>
 
 <template>
@@ -105,32 +106,32 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.profile-page {
-	max-width: 900px;
-}
+	.profile-page {
+		max-width: 900px;
+	}
 
-.stats-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-	gap: 1rem;
-}
+	.stats-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+		gap: 1rem;
+	}
 
-.stat {
-	border: 1px solid var(--border);
-	border-radius: 10px;
-	padding: 0.9rem 1rem;
-	background: var(--card);
-	box-shadow: var(--shadow);
-}
+	.stat {
+		border: 1px solid var(--border);
+		border-radius: 10px;
+		padding: 0.9rem 1rem;
+		background: var(--card);
+		box-shadow: var(--shadow);
+	}
 
-.label {
-	font-size: 0.9rem;
-	color: var(--muted);
-}
+	.label {
+		font-size: 0.9rem;
+		color: var(--muted);
+	}
 
-.value {
-	font-size: 1.3rem;
-	font-weight: 700;
-	color: var(--accent);
-}
+	.value {
+		font-size: 1.3rem;
+		font-weight: 700;
+		color: var(--accent);
+	}
 </style>

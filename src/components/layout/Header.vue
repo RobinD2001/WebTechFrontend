@@ -2,8 +2,8 @@
 	import { ref } from "vue";
 	import Auth from "@/components/auth/Auth.vue";
 	import { useAuth } from "@/composables/useAuth";
-  import { faUser } from "@fortawesome/free-regular-svg-icons";
-  import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+	import { faUser } from "@fortawesome/free-regular-svg-icons";
+	import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 	const { isAuthenticated } = useAuth();
 	const showAuth = ref(false);
@@ -43,7 +43,7 @@
 						class="btn"
 						aria-label="Login"
 						@click="openAuth">
-            sign in
+						sign in
 					</BButton>
 				</BNavItem>
 			</BCollapse>
@@ -53,26 +53,26 @@
 </template>
 
 <style scoped>
-.icon-btn {
-	width: 38px;
-	height: 38px;
-	border-radius: 50%;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	border: 2px solid #333;
-	color: #333;
-	background: transparent;
-	padding: 0;
-}
+	.icon-btn {
+		width: 38px;
+		height: 38px;
+		border-radius: 50%;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		border: 2px solid #333;
+		color: #333;
+		background: transparent;
+		padding: 0;
+	}
 
-.icon-btn:hover,
-.icon-btn:focus {
-	color: #000;
-	border-color: #000;
-}
+	.icon-btn:hover,
+	.icon-btn:focus {
+		color: #000;
+		border-color: #000;
+	}
 
-.user {
-  margin-left: 2em;
-}
+	.user {
+		margin-left: 2em;
+	}
 </style>
