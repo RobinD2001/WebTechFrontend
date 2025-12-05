@@ -1,51 +1,40 @@
 import { ref, computed } from "vue";
 import { apiPost } from "./useApi";
 import { syncLocalSolves } from "./useXW";
+import { STORAGE_KEYS, readString, writeString } from "@/utils/storage";
+import { clearStoredUser, getStoredUser, saveStoredUser } from "@/utils/user";
 
-const storedUser = localStorage.getItem("currentUser");
-const user = ref(storedUser ? JSON.parse(storedUser) : null);
-const token = ref(localStorage.getItem("token") || null);
+const user = ref(getStoredUser());
+const token = ref(readString(STORAGE_KEYS.token));
 
 const isAuthenticated = computed(() => !!user.value);
 
-function setUser(newUser) {
-	user.value = newUser;
-	if (newUser) {
-		localStorage.setItem("currentUser", JSON.stringify(newUser));
-	} else {
-		localStorage.removeItem("currentUser");
-	}
-}
-
-function setToken(newToken) {
-	token.value = newToken;
-	if (newToken) localStorage.setItem("token", newToken);
-	else localStorage.removeItem("token");
+async function authenticate(path, credentials) {
+	const data = await apiPost(path, credentials);
+	saveStoredUser(data.user);
+	writeString(STORAGE_KEYS.token, data.token ?? null);
+	await syncLocalSolves();
+	return data;
 }
 
 export function useAuth() {
 	async function login(credentials) {
-		const data = await apiPost("/api/login", credentials);
-		setUser(data.user);
-		setToken(data.token);
-		await syncLocalSolves();
-		return data;
+		return authenticate("/api/login", credentials);
 	}
 
 	async function register(credentials) {
-		const data = await apiPost("/api/register", credentials);
-		setUser(data.user);
-		await syncLocalSolves();
-		return data;
+		return authenticate("/api/register", credentials);
 	}
 
 	function logout() {
-		setUser(null);
+		clearStoredUser();
+		writeString(STORAGE_KEYS.token, null);
 	}
 
 	async function checkAdmin() {
-		console.log("checking", token.value);
-
+		if (!token.value) {
+			return { access: false, message: "No authentication token found." };
+		}
 		return apiPost("/api/admincheck", { token: token.value });
 	}
 

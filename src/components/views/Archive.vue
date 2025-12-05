@@ -1,52 +1,51 @@
 <script setup>
-	import { ref } from "vue";
+	import { onMounted, ref } from "vue";
 	import CrosswordApp from "@/components/xw/CrosswordApp.vue";
 	import { getXWInfo } from "@/composables/useXW";
+	import { normalizeArchiveDate, todayIsoString, yesterdayIsoString } from "@/utils/date";
 
 	const props = defineProps({
 		date: String,
 	});
 
-	const today = new Date();
-	const todayString = today.toISOString().slice(0, 10);
-	const yesterday = new Date(today);
-	yesterday.setDate(today.getDate() - 1);
-	const yesterdayString = yesterday.toISOString().slice(0, 10);
+	const todayIso = todayIsoString();
+	const defaultDate = yesterdayIsoString();
+	const initialDate = normalizeArchiveDate(props.date, defaultDate);
 
-	function normalizeDate(dateStr) {
-		if (!dateStr) return yesterdayString;
-		const [year, month, day] = dateStr.split("-").map(Number);
-		const candidate = new Date(Date.UTC(year, (month ?? 1) - 1, day ?? 1, 8, 0, 0));
-		if (Number.isNaN(candidate.valueOf())) return yesterdayString;
-		return candidate > new Date() ? todayString : dateStr;
-	}
-
-	const initialDate = normalizeDate(props.date ?? yesterdayString);
 	const selectedDate = ref(initialDate);
 	const currentPuzzleDate = ref(initialDate);
 
-	const difficulty = ref("---");
-	const averageTime = ref("0");
+	const difficulty = ref("unknown");
+	const averageTime = ref("--:--");
 
 	const fetchInfo = async (date) => {
 		if (!date) return;
 		try {
 			const info = await getXWInfo(date);
 			difficulty.value = info?.difficulty ?? "unknown";
-			averageTime.value = info?.avgTime ?? "99:99";
+			averageTime.value = info?.avgTime ?? "--:--";
 		} catch (err) {
 			console.error("Failed to load crossword info", err);
+			difficulty.value = "unknown";
+			averageTime.value = "--:--";
 		}
 	};
 
 	const handleDateBlur = async () => {
+		selectedDate.value = normalizeArchiveDate(selectedDate.value, defaultDate);
 		await fetchInfo(selectedDate.value);
 	};
 
 	const loadPuzzle = async () => {
-		currentPuzzleDate.value = normalizeDate(selectedDate.value);
+		const normalized = normalizeArchiveDate(selectedDate.value, defaultDate);
+		selectedDate.value = normalized;
+		currentPuzzleDate.value = normalized;
 		await fetchInfo(currentPuzzleDate.value);
 	};
+
+	onMounted(async () => {
+		await fetchInfo(currentPuzzleDate.value);
+	});
 </script>
 
 <template>
@@ -68,12 +67,12 @@
 								id="archive-date"
 								type="date"
 								v-model="selectedDate"
-								:max="today.toISOString().slice(0, 10)"
+								:max="todayIso"
 								required
 								@blur="handleDateBlur" />
 						</BFormGroup>
 					</BCol>
-					<BCol md="2" class="mb-3 mx-3">
+					<BCol md="3" class="mb-3 mx-3">
 						<BButton type="submit" variant="primary" class="w-100"
 							>Load crossword</BButton
 						>

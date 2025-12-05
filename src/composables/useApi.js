@@ -15,7 +15,7 @@ async function apiRequest(path, options = {}) {
 	}
 
 	if (!res.ok) {
-		const message = data && data.message ? data.message : "Request failed";
+		const message = data?.message ? data.message : "Request failed";
 		const error = new Error(message);
 		error.status = res.status;
 		error.body = data;

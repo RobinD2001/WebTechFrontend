@@ -1,9 +1,10 @@
 <script setup>
 	import CrosswordApp from "@/components/xw/CrosswordApp.vue";
 	import { computed } from "vue";
-	const todayDate = computed(() => new Date());
-	const todayIso = computed(() => todayDate.value.toISOString().split("T")[0]);
-	const todayLabel = computed(() => todayDate.value.toLocaleDateString());
+	import { formatFriendlyDate, todayIsoString } from "@/utils/date";
+
+	const todayIso = computed(() => todayIsoString());
+	const todayLabel = computed(() => formatFriendlyDate());
 </script>
 
 <template>
@@ -14,7 +15,7 @@
 		</section>
 
 		<BCard class="panel">
-			<div class="puzzle-meta muted">Published {{ todayLabel }}</div>
+			<div class="muted">Published {{ todayLabel }}</div>
 			<CrosswordApp :date="todayIso" />
 		</BCard>
 	</BContainer>
@@ -27,9 +28,5 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.25rem;
-	}
-
-	.puzzle-meta {
-		margin-bottom: 0.75rem;
 	}
 </style>

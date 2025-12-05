@@ -8,6 +8,9 @@ import Admin from "@/components/views/Admin.vue";
 import Leaderboard from "@/components/views/Leaderboard.vue";
 import HowTo from "@/components/views/HowTo.vue";
 import NotFound from "@/components/layout/NotFound.vue";
+import { randomArchiveDate } from "@/utils/date";
+
+const ARCHIVE_START_DATE = "2025-12-01";
 
 const routes = [
 	{
@@ -34,7 +37,10 @@ const routes = [
 	{
 		path: "/random",
 		name: "random",
-		redirect: () => ({ name: "crosswordSelect", params: { date: getRandomDate() } }),
+		redirect: () => ({
+			name: "crosswordSelect",
+			params: { date: randomArchiveDate(ARCHIVE_START_DATE) },
+		}),
 	},
 	{
 		path: "/profile",
@@ -85,9 +91,5 @@ router.beforeEach((to, from) => {
 
 	return true;
 });
-
-const getRandomDate = () => {
-	return "2025-11-29";
-};
 
 export default router;

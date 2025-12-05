@@ -30,6 +30,9 @@ const modalTitle = computed(() => {
   return isLogin.value ? "Login" : "Register";
 });
 
+const ALERT_DURATION_MS = 5000;
+const SUCCESS_CLOSE_DELAY_MS = 500;
+
 function blurActiveElement() {
   if (typeof document === "undefined") return;
   const activeElement = document.activeElement;
@@ -57,12 +60,12 @@ function onFormSubmitted(result) {
   if (success) {
     setTimeout(() => {
       closeModal();
-    }, 500);
+    }, SUCCESS_CLOSE_DELAY_MS);
   }
 
   setTimeout(() => {
     dismissAlert();
-  }, 5000);
+  }, ALERT_DURATION_MS);
 }
 
 function dismissAlert() {

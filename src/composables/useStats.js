@@ -1,13 +1,11 @@
 import { ref } from "vue";
 import { apiGet } from "@/composables/useApi.js";
-import { useAuth } from "@/composables/useAuth";
+import { resolveUsername } from "@/utils/user";
 
-const { user } = useAuth();
 const userQuery = ref("");
 
 function refreshUserQuery() {
-	const username =
-		user?.value?.username ?? user?.value?.name ?? user?.value?.user ?? user?.value?._id ?? null;
+	const username = resolveUsername();
 
 	if (!username) {
 		userQuery.value = "";

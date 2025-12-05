@@ -7,6 +7,7 @@
 
 	const activeContainer = ref(0);
 	const isAdmin = ref(false);
+	const isCheckingAccess = ref(true);
 	const noAccessMsg = ref("No Access");
 	const { checkAdmin } = useAuth();
 
@@ -19,6 +20,8 @@
 			console.error("Admin check failed", err);
 			isAdmin.value = false;
 			noAccessMsg.value = "Unable to verify admin access.";
+		} finally {
+			isCheckingAccess.value = false;
 		}
 	});
 </script>
@@ -38,6 +41,8 @@
 				<Schedule />
 			</BTab>
 		</BTabs>
-		<BAlert :model-value="!isAdmin" variant="danger">{{ noAccessMsg }}</BAlert>
+		<BAlert :model-value="!isAdmin && !isCheckingAccess" variant="danger">{{
+			noAccessMsg
+		}}</BAlert>
 	</BContainer>
 </template>

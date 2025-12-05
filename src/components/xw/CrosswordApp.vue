@@ -10,20 +10,21 @@
 	import { useNavigation } from "@/composables/xw/useNavigation";
 	import { useCrosswordTimer } from "@/composables/xw/useCrosswordTimer";
 	import { useAuth } from "@/composables/useAuth";
+	import { readJson, writeJson, STORAGE_KEYS } from "@/utils/storage";
 
 	const props = defineProps({
 		date: String,
 	});
 
-	const showWinner = ref(false);
-
 	const { grid, gridSize, setGrid, checkValidation } = useGridFactory();
-	const selection = useSelection(grid, gridSize);
-	const navigation = useNavigation(grid, gridSize, selection);
 	const { timerDisplay, timerClass, startTimer, stopTimer, elapsedMs } = useCrosswordTimer();
 	const { isAuthenticated } = useAuth();
+
+	const selection = useSelection(grid, gridSize);
+	const navigation = useNavigation(grid, gridSize, selection);
 	const puzzleInfo = ref(null);
 	const puzzleId = computed(() => puzzleInfo.value?.id ?? props.date ?? "unknown");
+	const showWinner = ref(false);
 
 	const { curCell, selectedAcrossId, selectedDownId, updateCellSelection, handleClueSelected } =
 		selection;
@@ -69,25 +70,24 @@
 	}
 
 	function persistSolveLocally() {
-		const existingRaw = localStorage.getItem("solves");
-		const existing = existingRaw ? JSON.parse(existingRaw) : [];
-		const next = Array.isArray(existing) ? existing : [];
+		const storedSolves = readJson(STORAGE_KEYS.solves, []);
+		const solves = Array.isArray(storedSolves) ? storedSolves : [];
 
-		next.push({
+		solves.push({
 			id: puzzleId.value,
 			timeMs: elapsedMs.value,
 			recordedAt: new Date().toISOString(),
 			releaseDate: props.date ?? null,
 		});
 
-		localStorage.setItem("solves", JSON.stringify(next));
+		writeJson(STORAGE_KEYS.solves, solves);
 	}
 
 	function handleCrosswordSolved() {
 		stopTimer();
 		showWinner.value = true;
-		addSolve(elapsedMs.value, props.date);
-		persistSolveLocally();
+		if (useAuth.isAuthenticated) addSolve(elapsedMs.value, props.date);
+		else persistSolveLocally();
 	}
 </script>
 
