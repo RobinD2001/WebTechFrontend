@@ -8,12 +8,22 @@
 	});
 
 	const today = new Date();
+	const todayString = today.toISOString().slice(0, 10);
 	const yesterday = new Date(today);
 	yesterday.setDate(today.getDate() - 1);
 	const yesterdayString = yesterday.toISOString().slice(0, 10);
 
-	const selectedDate = ref(props.date ?? yesterdayString);
-	const currentPuzzleDate = ref(props.date ?? yesterdayString);
+	function normalizeDate(dateStr) {
+		if (!dateStr) return yesterdayString;
+		const [year, month, day] = dateStr.split("-").map(Number);
+		const candidate = new Date(Date.UTC(year, (month ?? 1) - 1, day ?? 1, 8, 0, 0));
+		if (Number.isNaN(candidate.valueOf())) return yesterdayString;
+		return candidate > new Date() ? todayString : dateStr;
+	}
+
+	const initialDate = normalizeDate(props.date ?? yesterdayString);
+	const selectedDate = ref(initialDate);
+	const currentPuzzleDate = ref(initialDate);
 
 	const difficulty = ref("---");
 	const averageTime = ref("0");
@@ -34,7 +44,7 @@
 	};
 
 	const loadPuzzle = async () => {
-		currentPuzzleDate.value = selectedDate.value;
+		currentPuzzleDate.value = normalizeDate(selectedDate.value);
 		await fetchInfo(currentPuzzleDate.value);
 	};
 </script>
