@@ -1,9 +1,15 @@
 <script setup>
-  import {  
-    faGithub,
-    faXTwitter,
-  } from "@fortawesome/free-brands-svg-icons";
-  import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+	import { computed } from "vue";
+	import { useRoute } from "vue-router";
+	import {
+		faGithub,
+		faXTwitter,
+	} from "@fortawesome/free-brands-svg-icons";
+	import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+	import { DEFAULT_LOCALE } from "@/i18n";
+
+	const route = useRoute();
+	const locale = computed(() => route.params.locale || DEFAULT_LOCALE);
 </script>
 
 <template>
@@ -11,33 +17,33 @@
     <div class="container">
       <div class="row">
         <div class="col-md-6 mb-3">
-          <h5>About Us</h5>
-          <p>
-            A crossword a day keeps the doctor away.<br/>
-            I post a new mini every morning - quick, fun, and hopefully a little clever. <br />
-            If you appreciate this little puzzle corner of mine, make sure to tell your friends.
+          <h5>{{ $t("footer.aboutTitle") }}</h5>
+          <p class="mb-0" v-for="(line, idx) in $t('footer.aboutText').split('\\n')" :key="idx">
+            {{ line }}
           </p>
         </div>
         <div class="col-md-3 mb-3">
-          <h5>Quick Links</h5>
+          <h5>{{ $t("footer.quickLinks") }}</h5>
           <ul class="list-unstyled">
             <li>
-              <router-link class="nav-link" to="/">Home</router-link>
+              <router-link class="nav-link" :to="{ name: 'home', params: { locale } }">
+                {{ $t("footer.home") }}
+              </router-link>
             </li>
             <li>
-              <router-link class="nav-link" :to="{ name: 'daily' }"
-                >Daily Puzzle</router-link
-              >
+              <router-link class="nav-link" :to="{ name: 'daily', params: { locale } }">
+                {{ $t("footer.daily") }}
+              </router-link>
             </li>
             <li>
-              <router-link class="nav-link" :to="{ name: 'daily' }"
-                >Archive</router-link
-              >
+              <router-link class="nav-link" :to="{ name: 'crossword', params: { locale } }">
+                {{ $t("footer.archive") }}
+              </router-link>
             </li>
           </ul>
         </div>
         <div class="col-md-3 mb-3">
-          <h5>Follow Us</h5>
+          <h5>{{ $t("footer.followUs") }}</h5>
           <ul class="list-inline social-icons">
             <li class="list-inline-item">
               <a href="https://www.x.com" class="text-dark">
@@ -55,7 +61,7 @@
       <hr class="mb-4" />
       <div class="row">
         <div class="col-md-12 text-center">
-          <p>&copy; 2025 Daily Crosswords. All rights reserved.</p>
+          <p>{{ $t("footer.copyright") }}</p>
         </div>
       </div>
     </div>

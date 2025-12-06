@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
+import { useI18n } from "vue-i18n";
 import { BModal, BAlert } from "bootstrap-vue-3";
 import AuthForm from "./AuthForm.vue";
 
@@ -26,9 +27,10 @@ const isVisible = computed({
   },
 });
 
-const modalTitle = computed(() => {
-  return isLogin.value ? "Login" : "Register";
-});
+const { t } = useI18n();
+const modalHeading = computed(() =>
+  isLogin.value ? t("auth.modalTitleLogin") : t("auth.modalTitleRegister")
+);
 
 const ALERT_DURATION_MS = 5000;
 const SUCCESS_CLOSE_DELAY_MS = 500;
@@ -77,11 +79,11 @@ function dismissAlert() {
   <BModal
     v-model="isVisible"
     class="authModal"
-    :title='isLogin ? "Welcome back" : "Join us"'
+    :title="modalHeading"
     hide-footer="true"
     centered
-    :aria-label="modalTitle + ' dialog'"
-    header-close-label="Close authentication dialog"
+    :aria-label="modalHeading"
+    :header-close-label="$t('auth.modalClose')"
     @hide="onHide"
   >
     <AuthForm

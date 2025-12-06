@@ -1,8 +1,10 @@
 <script setup>
 	import { computed, ref, reactive } from "vue";
+	import { useI18n } from "vue-i18n";
 	import { useAuth } from "@/composables/useAuth";
 
 	const { login, register } = useAuth();
+	const { t } = useI18n();
 
 	const props = defineProps({
 		isLogin: {
@@ -14,7 +16,9 @@
 	const emit = defineEmits(["success", "modeChange"]);
 
 	const isLogin = ref(props.isLogin);
-	const authTypeLabel = computed(() => (isLogin.value ? "Login" : "Register"));
+	const authTypeLabel = computed(() =>
+		isLogin.value ? t("auth.login") : t("auth.register")
+	);
 
 	const user = reactive({
 		name: "",
@@ -42,12 +46,12 @@
 		const invalidEmail = !isLogin.value && user.email && !emailPattern.test(user.email);
 
 		if (!user.name || !user.password || missingEmail) {
-			emit("success", [false, "Please fill in all required fields."]);
+			emit("success", [false, t("auth.errorMissing")]);
 			return;
 		}
 
 		if (invalidEmail) {
-			emit("success", [false, "Please enter a valid email address."]);
+			emit("success", [false, t("auth.errorEmail")]);
 			return;
 		}
 
@@ -65,18 +69,23 @@
 						password: user.password,
 				  });
 
-			emit("success", [true, data.message || authTypeLabel.value + " successful"]);
+			const successMessage =
+				data.message ||
+				(isLogin.value ? t("auth.successLogin") : t("auth.successRegister"));
+			emit("success", [true, successMessage]);
 			console.log("Auth success:", data.user);
 			clearForm();
 		} catch (e) {
 			console.error(e);
-			emit("success", [false, e.message || authTypeLabel.value + " failed"]);
+			const action = authTypeLabel.value;
+			emit("success", [false, e.message || t("auth.errorFailed", { action })]);
 		} finally {
 			submitting.value = false;
 		}
 	}
 
-	const isNeeded = (label) => (isLogin.value ? label : label + "(*)");
+	const labelWithRequired = (key) =>
+		isLogin.value ? t(key) : `${t(key)}(*)`;
 </script>
 
 <template>
@@ -85,13 +94,13 @@
 			<p class="text-muted mb-0">
 				{{
 					isLogin
-						? "Log in to continue solving crosswords."
-						: "Create an account to track your stats."
+						? $t("auth.introLogin")
+						: $t("auth.introRegister")
 				}}
 			</p>
 		</div>
 
-		<BFormGroup :label="isNeeded('Name')" class="mb-3">
+		<BFormGroup :label="labelWithRequired('auth.labels.name')" class="mb-3">
 			<BFormInput
 				class="auth-name"
 				v-model="user.name"
@@ -99,11 +108,11 @@
 				required
 				autocomplete="username"
 				aria-required="true"
-				aria-label="Name"
-				placeholder="Enter your name" />
+				:aria-label="$t('auth.labels.name')"
+				:placeholder="$t('auth.placeholders.name')" />
 		</BFormGroup>
 
-		<BFormGroup v-if="!isLogin" label="Email" class="mb-3">
+		<BFormGroup v-if="!isLogin" :label="$t('auth.labels.email')" class="mb-3">
 			<BFormInput
 				class="auth-email"
 				v-model="user.email"
@@ -111,11 +120,11 @@
 				required
 				autocomplete="email"
 				aria-required="false"
-				aria-label="Email"
-				placeholder="Enter your email" />
+				:aria-label="$t('auth.labels.email')"
+				:placeholder="$t('auth.placeholders.email')" />
 		</BFormGroup>
 
-		<BFormGroup :label="isNeeded('Password')" class="col mb-3">
+		<BFormGroup :label="labelWithRequired('auth.labels.password')" class="col mb-3">
 			<BFormInput
 				class="auth-password"
 				v-model="user.password"
@@ -123,10 +132,12 @@
 				required
 				autocomplete="current-password"
 				aria-required="true"
-				aria-label="Password"
-				placeholder="Enter your password" />
+				:aria-label="$t('auth.labels.password')"
+				:placeholder="$t('auth.placeholders.password')" />
 			<div v-if="isLogin" class="small forgot-password text-end mt-1 fw-light">
-				<button type="button" class="toggle-btn" @click="">Forgot your password?</button>
+				<button type="button" class="toggle-btn" @click="">
+					{{ $t("auth.forgotPassword") }}
+				</button>
 			</div>
 		</BFormGroup>
 
@@ -137,18 +148,22 @@
 				:disabled="submitting"
 				:aria-disabled="submitting"
 				:aria-busy="submitting">
-				{{ submitting ? "Please wait..." : authTypeLabel }}
+				{{ submitting ? $t("auth.pleaseWait") : authTypeLabel }}
 			</BButton>
 		</div>
 
 		<div class="text-center small">
 			<span v-if="isLogin">
-				Not a member yet?
-				<button type="button" class="toggle-btn" @click="toggleAuth">Register</button>
+				{{ $t("auth.notMember") }}
+				<button type="button" class="toggle-btn" @click="toggleAuth">
+					{{ $t("auth.toggleRegister") }}
+				</button>
 			</span>
 			<span v-else>
-				Already a member?
-				<button type="button" class="toggle-btn" @click="toggleAuth">Login</button>
+				{{ $t("auth.alreadyMember") }}
+				<button type="button" class="toggle-btn" @click="toggleAuth">
+					{{ $t("auth.toggleLogin") }}
+				</button>
 			</span>
 		</div>
 	</BForm>

@@ -9,68 +9,80 @@ import Leaderboard from "@/components/views/Leaderboard.vue";
 import HowTo from "@/components/views/HowTo.vue";
 import NotFound from "@/components/layout/NotFound.vue";
 import { randomArchiveDate } from "@/utils/date";
+import i18n, { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@/i18n";
 
 const ARCHIVE_START_DATE = "2025-12-01";
 
 const routes = [
 	{
 		path: "/",
+		redirect: { name: "home", params: { locale: DEFAULT_LOCALE } },
+	},
+	{
+		path: "/:locale(en|de)",
 		name: "home",
 		component: Home,
 	},
 	{
-		path: "/daily",
+		path: "/:locale(en|de)/daily",
 		name: "daily",
 		component: DailyCrossword,
 	},
 	{
-		path: "/crossword",
+		path: "/:locale(en|de)/crossword",
 		name: "crossword",
 		component: Archive,
 	},
 	{
-		path: "/crossword/:date",
+		path: "/:locale(en|de)/crossword/:date",
 		name: "crosswordSelect",
 		component: Archive,
 		props: (route) => ({ date: route.params.date }),
 	},
 	{
-		path: "/random",
+		path: "/:locale(en|de)/random",
 		name: "random",
-		redirect: () => ({
+		redirect: (to) => ({
 			name: "crosswordSelect",
-			params: { date: randomArchiveDate(ARCHIVE_START_DATE) },
+			params: {
+				locale: to.params.locale,
+				date: randomArchiveDate(ARCHIVE_START_DATE),
+			},
 		}),
 	},
 	{
-		path: "/profile",
+		path: "/:locale(en|de)/profile",
 		name: "profile",
 		component: Profile,
 	},
 	{
-		path: "/leaderboard",
+		path: "/:locale(en|de)/leaderboard",
 		name: "leaderboard",
 		component: Leaderboard,
 	},
 	{
-		path: "/howto",
+		path: "/:locale(en|de)/howto",
 		name: "howto",
 		component: HowTo,
 	},
 	{
-		path: "/admin",
+		path: "/:locale(en|de)/admin",
 		name: "admin",
 		component: Admin,
 		meta: { requiresAuth: true },
 	},
 	{
-		path: "/404",
+		path: "/:locale(en|de)/404",
 		name: "404",
 		component: NotFound,
 	},
 	{
-		path: "/:catchAll(.*)*",
-		redirect: { name: "404" },
+		path: "/:locale(en|de)/:catchAll(.*)*",
+		redirect: (to) => ({ name: "404", params: { locale: to.params.locale } }),
+	},
+	{
+		path: "/:pathMatch(.*)*",
+		redirect: { name: "home", params: { locale: DEFAULT_LOCALE } },
 	},
 ];
 
@@ -83,7 +95,18 @@ const router = createRouter({
 	},
 });
 
-router.beforeEach((to, from) => {
+router.beforeEach((to) => {
+	const localeParam = to.params.locale;
+	const locale = Array.isArray(localeParam) ? localeParam[0] : localeParam;
+
+	if (!SUPPORTED_LOCALES.includes(locale)) {
+		return { name: "home", params: { locale: DEFAULT_LOCALE } };
+	}
+
+	if (i18n.global.locale.value !== locale) {
+		i18n.global.locale.value = locale;
+	}
+
 	const { isAuthenticated } = useAuth();
 	if (to.meta.requiresAuth && !isAuthenticated.value) {
 		return false;

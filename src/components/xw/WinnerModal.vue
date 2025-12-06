@@ -1,4 +1,6 @@
 <script setup>
+	import { useI18n } from "vue-i18n";
+
 	const props = defineProps({
 		modelValue: Boolean,
 		puzzleId: {
@@ -17,6 +19,7 @@
 
 	const emit = defineEmits(["update:modelValue"]);
 	const onUpdate = (val) => emit("update:modelValue", val);
+	const { t } = useI18n();
 </script>
 
 <template>
@@ -25,22 +28,22 @@
 		@update:model-value="onUpdate"
 		ok-only="true"
 		centered
-		title="Great solve!">
+		:title="$t('crossword.winnerTitle')">
 		<div class="winner-content">
 			<div class="time-card">
-				<div class="puzzle-id">Puzzle ID: {{ props.puzzleId }}</div>
-				<div class="label">Your time</div>
+				<div class="puzzle-id">
+					{{ $t("crossword.puzzleId", { id: props.puzzleId }) }}
+				</div>
+				<div class="label">{{ $t("crossword.yourTime") }}</div>
 				<div class="time">{{ props.timeDisplay }}</div>
-				<div class="subtext">Nice work finishing this mini.</div>
+				<div class="subtext">{{ $t("crossword.finishSubtext") }}</div>
 			</div>
 
 			<div class="panel">
-				<p class="mb-2">
-					Come back tomorrow for a fresh puzzle or browse older Minis in the archive.
-				</p>
+				<p class="mb-2">{{ $t("crossword.returnText") }}</p>
 				<p v-if="!props.isAuthenticated" class="auth-reminder">
-					<strong>Tip:</strong> Sign in to track your solves and appear on the
-					leaderboard.
+					<strong>{{ $t("crossword.signinTipLabel") }}</strong>
+					{{ $t("crossword.signinTip") }}
 				</p>
 			</div>
 		</div>

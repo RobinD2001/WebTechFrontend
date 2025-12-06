@@ -1,5 +1,6 @@
 <script setup>
 	import { computed, ref, watch } from "vue";
+	import { useI18n } from "vue-i18n";
 
 	const props = defineProps({
 		selectedDownId: Number,
@@ -11,6 +12,7 @@
 	const acrossClues = ref([]);
 	const downClues = ref([]);
 	const allClues = ref([]);
+	const { t } = useI18n();
 
 	const gridSize = computed(() => {
 		if (allClues.value.length == 0) return { rows: 0, cols: 0 };
@@ -129,12 +131,12 @@
 </script>
 
 <template>
-	<div id="xw_clues" aria-label="Crossword clues" class="clue-stack">
+	<div id="xw_clues" :aria-label="$t('crossword.clueListAria')" class="clue-stack">
 		<section class="clue-pad tilt-left">
 			<div class="clue-pad-header">
-				<h3>Across</h3>
+				<h3>{{ $t("crossword.across") }}</h3>
 			</div>
-			<ul class="clue-items" aria-label="Across clues">
+			<ul class="clue-items" :aria-label="$t('crossword.acrossAria')">
 				<li
 					v-for="clue in acrossClues"
 					:key="`across-${clue.start_number}`"
@@ -155,9 +157,9 @@
 		</section>
 		<section class="clue-pad tilt-right">
 			<div class="clue-pad-header">
-				<h3>Down</h3>
+				<h3>{{ $t("crossword.down") }}</h3>
 			</div>
-			<ul class="clue-items" aria-label="Down clues">
+			<ul class="clue-items" :aria-label="$t('crossword.downAria')">
 				<li
 					v-for="clue in downClues"
 					:key="`down-${clue.start_number}`"

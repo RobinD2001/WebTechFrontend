@@ -1,14 +1,20 @@
 <script setup>
-	import { onMounted, ref } from "vue";
+	import { computed, onMounted, reactive, ref } from "vue";
+	import { useRoute } from "vue-router";
+	import { useI18n } from "vue-i18n";
 	import { getDailyLeaderboard } from "@/composables/useStats";
 	import Preview from "@/components/xw/Preview.vue";
 	import Auth from "@/components/auth/Auth.vue";
 	import LeaderboardList from "@/components/leaderboard/LeaderboardList.vue";
+	import { DEFAULT_LOCALE } from "@/i18n";
 
 	const showAuth = ref(false);
 	const leaderboard = ref([]);
 	const loadingLeaderboard = ref(false);
 	const errorLeaderboard = ref("");
+	const route = useRoute();
+	const locale = computed(() => route.params.locale || DEFAULT_LOCALE);
+	const { t, tm } = useI18n();
 
 	const openAuth = () => {
 		showAuth.value = true;
@@ -21,7 +27,7 @@
 			const data = await getDailyLeaderboard();
 			leaderboard.value = data?.leaderboard || [];
 		} catch (err) {
-			errorLeaderboard.value = err?.message || "Failed to load leaderboard.";
+			errorLeaderboard.value = err?.message || t("errors.loadDailyLeaderboard");
 			leaderboard.value = [];
 		} finally {
 			loadingLeaderboard.value = false;
@@ -31,21 +37,33 @@
 	onMounted(() => {
 		loadMiniLeaderboard();
 	});
+
+	const funfacts = computed(() => tm("home.funFacts") || []);
+	const randomFunFact = computed(() => {
+		const list = funfacts.value || [];
+		return list.length ? list[Math.floor(Math.random() * list.length)] : "";
+	});
 </script>
 
 <template>
 	<BContainer fluid class="home">
 		<section class="hero">
-			<p class="eyebrow">v1</p>
-			<h1>Daily Mini Crosswords</h1>
-			<p class="tagline">A fresh Mini every morning. Quick. Clever. Always free.</p>
+			<p class="eyebrow">{{ $t("home.eyebrow") }}</p>
+			<h1>{{ $t("home.title") }}</h1>
+			<p class="tagline">{{ $t("home.tagline") }}</p>
 			<div class="hero-actions">
-				<BButton variant="outline-dark" class="cta">
+				<BButton
+					variant="outline-dark"
+					class="cta"
+					:to="{ name: 'daily', params: { locale } }">
 					<span class="cta-icon">▶</span>
-					Play Now
+					{{ $t("home.playNow") }}
 				</BButton>
-				<BButton variant="text" class="link-btn" :to="{ name: 'crossword' }">
-					Yesterday's puzzle →
+				<BButton
+					variant="text"
+					class="link-btn"
+					:to="{ name: 'crossword', params: { locale } }">
+					{{ $t("home.yesterdayCta") }}
 				</BButton>
 			</div>
 		</section>
@@ -66,7 +84,7 @@
 					:limit="5">
 					<template #footer>
 						<BButton variant="text" class="link-btn mt-2" @click="openAuth">
-							Log in to track your stats →
+							{{ $t("home.loginCta") }}
 						</BButton>
 						<Auth v-model="showAuth" />
 					</template>
@@ -77,25 +95,31 @@
 		<BRow class="cta-grid g-3">
 			<BCol lg="4">
 				<BCard class="panel sction h-100">
-					<h4>Fun fact of the day</h4>
-					<p class="mb-0">Crossword were invented in some year i don't know.</p>
+					<h4>{{ $t("home.funFactTitle") }}</h4>
+					<p class="mb-0">{{ randomFunFact }}</p>
 				</BCard>
 			</BCol>
 			<BCol lg="4">
 				<BCard class="panel action h-100">
-					<h4>Yesterday's Mini</h4>
-					<p>In case you missed it.</p>
-					<BButton variant="text" class="link-btn" :to="{ name: 'crossword' }">
-						Play →
+					<h4>{{ $t("home.yesterdayTitle") }}</h4>
+					<p>{{ $t("home.yesterdayDescription") }}</p>
+					<BButton
+						variant="text"
+						class="link-btn"
+						:to="{ name: 'crossword', params: { locale } }">
+						{{ $t("home.play") }}
 					</BButton>
 				</BCard>
 			</BCol>
 			<BCol lg="4">
 				<BCard class="panel action h-100">
-					<h4>Random Mini</h4>
-					<p>A surprise one from the vault.</p>
-					<BButton variant="text" class="link-btn" :to="{ name: 'random' }">
-						Play →
+					<h4>{{ $t("home.randomTitle") }}</h4>
+					<p>{{ $t("home.randomDescription") }}</p>
+					<BButton
+						variant="text"
+						class="link-btn"
+						:to="{ name: 'random', params: { locale } }">
+						{{ $t("home.play") }}
 					</BButton>
 				</BCard>
 			</BCol>

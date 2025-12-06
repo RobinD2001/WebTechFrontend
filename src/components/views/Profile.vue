@@ -1,14 +1,19 @@
 <script setup>
 	import { onMounted, ref, computed } from "vue";
-	import { useRouter } from "vue-router";
+	import { useRoute, useRouter } from "vue-router";
+	import { useI18n } from "vue-i18n";
 	import { useAuth } from "@/composables/useAuth";
 	import { getStats } from "@/composables/useStats";
 	import { resolveUsername } from "@/utils/user";
 	import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 	import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+	import { DEFAULT_LOCALE } from "@/i18n";
 
 	const { logout, user } = useAuth();
+	const route = useRoute();
 	const router = useRouter();
+	const locale = computed(() => route.params.locale || DEFAULT_LOCALE);
+	const { t } = useI18n();
 
 	const stats = ref(null);
 	const loading = ref(false);
@@ -16,13 +21,13 @@
 
 	const statsApi = getStats();
 
-	const username = computed(() => resolveUsername(user.value) ?? "Guest");
+	const username = computed(() => resolveUsername(user.value) ?? t("profile.guest"));
 
 	const goBack = () => {
 		if (window?.history?.length > 1) {
 			router.back();
 		} else {
-			router.push({ name: "home" });
+			router.push({ name: "home", params: { locale: locale.value } });
 		}
 	};
 
@@ -47,7 +52,7 @@
 		try {
 			stats.value = await statsApi.getUser();
 		} catch (err) {
-			error.value = err?.message || "Failed to load profile stats.";
+			error.value = err?.message || t("errors.profileStats");
 			stats.value = null;
 		} finally {
 			loading.value = false;
@@ -72,12 +77,12 @@
 				</BButton>
 			</BCol>
 			<BCol>
-				<h1 class="mb-2">Profile</h1>
-				<p class="mb-0">Welcome back, {{ username }}.</p>
+				<h1 class="mb-2">{{ $t("profile.title") }}</h1>
+				<p class="mb-0">{{ $t("profile.welcome", { name: username }) }}</p>
 			</BCol>
 			<BCol cols="auto">
-				<router-link :to="{ name: 'home' }">
-					<BButton variant="warning" @click="logout()">Logout</BButton>
+				<router-link :to="{ name: 'home', params: { locale } }">
+					<BButton variant="warning" @click="logout()">{{ $t("profile.logout") }}</BButton>
 				</router-link>
 			</BCol>
 		</BRow>
@@ -86,42 +91,42 @@
 
 		<BCard class="panel">
 			<div class="d-flex align-items-center justify-content-between mb-3">
-				<h4 class="mb-0">Your Stats</h4>
+				<h4 class="mb-0">{{ $t("profile.statsTitle") }}</h4>
 				<BSpinner v-if="loading" small />
 			</div>
 
 			<div v-if="!loading && stats" class="stats-grid">
 				<div class="stat">
-					<div class="label">Joined</div>
+					<div class="label">{{ $t("profile.joined") }}</div>
 					<div class="value">{{ formatDate(stats.joinedAt) }}</div>
 				</div>
 				<div class="stat">
-					<div class="label">Last played</div>
+					<div class="label">{{ $t("profile.lastPlayed") }}</div>
 					<div class="value">{{ formatDate(stats.lastPlayedAt) }}</div>
 				</div>
 				<div class="stat">
-					<div class="label">Puzzles solved</div>
+					<div class="label">{{ $t("profile.solved") }}</div>
 					<div class="value">{{ stats.totalSolved ?? 0 }}</div>
 				</div>
 				<div class="stat">
-					<div class="label">Current streak</div>
-					<div class="value">{{ stats.currentStreak ?? 0 }} days</div>
+					<div class="label">{{ $t("profile.currentStreak") }}</div>
+					<div class="value">{{ stats.currentStreak ?? 0 }} {{ $t("profile.days") }}</div>
 				</div>
 				<div class="stat">
-					<div class="label">Best streak</div>
-					<div class="value">{{ stats.bestStreak ?? 0 }} days</div>
+					<div class="label">{{ $t("profile.bestStreak") }}</div>
+					<div class="value">{{ stats.bestStreak ?? 0 }} {{ $t("profile.days") }}</div>
 				</div>
 				<div class="stat">
-					<div class="label">Avg (14 days)</div>
+					<div class="label">{{ $t("profile.avg14") }}</div>
 					<div class="value">{{ formatSeconds(stats.average14Days) }}</div>
 				</div>
 				<div class="stat">
-					<div class="label">Avg (overall)</div>
+					<div class="label">{{ $t("profile.avgOverall") }}</div>
 					<div class="value">{{ formatSeconds(stats.averageOverall) }}</div>
 				</div>
 			</div>
 
-			<p v-else-if="!loading" class="mb-0 muted">No stats available.</p>
+			<p v-else-if="!loading" class="mb-0 muted">{{ $t("profile.noStats") }}</p>
 		</BCard>
 	</BContainer>
 </template>

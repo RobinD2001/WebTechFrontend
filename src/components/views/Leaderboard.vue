@@ -1,5 +1,6 @@
 <script setup>
 	import { onMounted, ref } from "vue";
+	import { useI18n } from "vue-i18n";
 	import { getDailyLeaderboard, getWeeklyLeaderboard } from "@/composables/useStats";
 	import LeaderboardList from "@/components/leaderboard/LeaderboardList.vue";
 
@@ -12,6 +13,7 @@
 	const loadingWeekly = ref(false);
 	const errorDaily = ref("");
 	const errorWeekly = ref("");
+	const { t } = useI18n();
 
 	async function loadDaily() {
 		loadingDaily.value = true;
@@ -24,7 +26,7 @@
 			dailyRows.value = leaderboard || [];
 			dailyPlacement.value = userPlacement || null;
 		} catch (err) {
-			errorDaily.value = err?.message || "Failed to load today's leaderboard.";
+			errorDaily.value = err?.message || t("errors.loadDailyLeaderboard");
 			dailyRows.value = [];
 			dailyPlacement.value = null;
 		} finally {
@@ -41,7 +43,7 @@
 			weeklyRows.value = leaderboard || [];
 			weeklyPlacement.value = userPlacement || null;
 		} catch (err) {
-			errorWeekly.value = err?.message || "Failed to load weekly leaderboard.";
+			errorWeekly.value = err?.message || t("errors.loadWeeklyLeaderboard");
 			weeklyRows.value = [];
 			weeklyPlacement.value = null;
 		} finally {
@@ -61,10 +63,10 @@
 <template>
 	<BContainer fluid class="leaderboard-page">
 		<section class="intro">
-			<p class="eyebrow">Community stats</p>
-			<h1>Leaderboards</h1>
+			<p class="eyebrow">{{ $t("leaderboardPage.eyebrow") }}</p>
+			<h1>{{ $t("leaderboardPage.title") }}</h1>
 			<p class="lede">
-				See today's fastest solvers and the most consistent players this week.
+				{{ $t("leaderboardPage.lede") }}
 			</p>
 		</section>
 

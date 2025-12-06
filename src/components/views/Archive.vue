@@ -1,5 +1,6 @@
 <script setup>
 	import { onMounted, ref } from "vue";
+	import { useI18n } from "vue-i18n";
 	import CrosswordApp from "@/components/xw/CrosswordApp.vue";
 	import { getXWInfo } from "@/composables/useXW";
 	import { normalizeArchiveDate, todayIsoString, yesterdayIsoString } from "@/utils/date";
@@ -17,16 +18,17 @@
 
 	const difficulty = ref("unknown");
 	const averageTime = ref("--:--");
+	const { t } = useI18n();
 
 	const fetchInfo = async (date) => {
 		if (!date) return;
 		try {
 			const info = await getXWInfo(date);
-			difficulty.value = info?.difficulty ?? "unknown";
+			difficulty.value = info?.difficulty ?? t("archive.unknown");
 			averageTime.value = info?.avgTime ?? "--:--";
 		} catch (err) {
 			console.error("Failed to load crossword info", err);
-			difficulty.value = "unknown";
+			difficulty.value = t("archive.unknown");
 			averageTime.value = "--:--";
 		}
 	};
@@ -51,15 +53,15 @@
 <template>
 	<BContainer fluid class="archive-page">
 		<section class="hero">
-			<h1>Find a past Mini</h1>
-			<p class="tagline">Pick a date to load that day's mini crossword.</p>
+			<h1>{{ $t("archive.title") }}</h1>
+			<p class="tagline">{{ $t("archive.tagline") }}</p>
 		</section>
 
 		<BCard class="panel">
 			<BForm @submit.prevent="loadPuzzle">
 				<BRow class="gy-2 gx-3 align-items-end">
 					<BCol md="6" lg="6" class="d-flex align-items-center gap-2">
-						<label class="fw-bold mb-0" for="archive-date">from:</label>
+						<label class="fw-bold mb-0" for="archive-date">{{ $t("archive.fromLabel") }}</label>
 						<BFormInput
 							id="archive-date"
 							type="date"
@@ -69,17 +71,17 @@
 							@blur="handleDateBlur" />
 					</BCol>
 					<BCol md="2" lg="2" class="mb-0 mx-3">
-						<BButton type="submit" variant="primary" class="w-100"
-							>Load crossword</BButton
-						>
+						<BButton type="submit" variant="primary" class="w-100">
+							{{ $t("archive.load") }}
+						</BButton>
 					</BCol>
 					<BCol md="3" class="text-md-end stats mb-0">
 						<div class="stat">
-							<span class="label">Difficulty</span>
+							<span class="label">{{ $t("archive.difficulty") }}</span>
 							<strong>{{ difficulty }}</strong>
 						</div>
 						<div class="stat">
-							<span class="label">Average time</span>
+							<span class="label">{{ $t("archive.averageTime") }}</span>
 							<strong>{{ averageTime }}</strong>
 						</div>
 					</BCol>
@@ -90,7 +92,9 @@
 		<div class="header"></div>
 		<CrosswordApp :date="currentPuzzleDate"></CrosswordApp>
 		<div>
-			<p class="muted text-end mb-2em">Loaded from {{ currentPuzzleDate }}</p>
+			<p class="muted text-end mb-2em">
+				{{ $t("archive.loadedFrom", { date: currentPuzzleDate }) }}
+			</p>
 		</div>
 	</BContainer>
 </template>

@@ -1,0 +1,201 @@
+{
+	"nav": {
+		"daily": "Tagesrätsel",
+		"archive": "Archiv",
+		"leaderboard": "Bestenliste",
+		"howto": "So spielst du",
+		"signIn": "Anmelden",
+		"profile": "Profil"
+	},
+	"home": {
+		"eyebrow": "Für alle, die gern um die Ecke denken",
+		"title": "Tägliche Mini-Kreuzworträtsel",
+		"tagline": "Jeden Morgen ein frisches Mini. Kurz, clever, immer kostenlos.",
+		"playNow": "Jetzt spielen",
+		"yesterdayCta": "Das gestrige Rätsel →",
+		"loginCta": "Meld dich an und verfolg deine Statistiken →",
+		"funFactTitle": "Fun Fact des Tages",
+		"funFacts": [
+			"Kreuzworträtsel wurden zuerst als \"Word-Cross\" veröffentlicht - also als Wortkreuz.",
+			"Arthur Wynne veröffentlichte 1913 das erste Kreuzworträtsel.",
+			"Kreuzworträtsel sind montags meist am leichtesten und werden im Wochenverlauf schwerer."
+		],
+		"yesterdayTitle": "Das Rätsel von gestern",
+		"yesterdayDescription": "Falls du es verpasst hast.",
+		"play": "Spielen →",
+		"randomTitle": "Zufälliges Mini",
+		"randomDescription": "Eine Überraschung aus dem Archiv."
+	},
+	"preview": {
+		"eyebrow": "Vorschau",
+		"title": "Heutiges Mini"
+	},
+	"dailyPage": {
+		"eyebrow": "Heutiges Mini",
+		"title": "Kreuzwort des Tages",
+		"published": "Veröffentlicht am {date}"
+	},
+	"archive": {
+		"title": "Finde ein früheres Mini",
+		"tagline": "Wähle ein Datum, um das Mini von diesem Tag zu laden.",
+		"fromLabel": "Datum:",
+		"load": "Kreuzwort laden",
+		"difficulty": "Schwierigkeit",
+		"averageTime": "Durchschnittszeit",
+		"loadedFrom": "Geladen vom {date}",
+		"unknown": "unbekannt"
+	},
+	"leaderboardPage": {
+		"eyebrow": "Community-Statistiken",
+		"title": "Bestenlisten",
+		"lede": "Sieh dir die Schnellsten von heute und die konstantesten Spieler dieser Woche an."
+	},
+	"leaderboardList": {
+		"daily": {
+			"eyebrow": "Sprint",
+			"title": "Tagesbestzeit",
+			"subtitle": "Neue Chancen täglich ab früh um 9.",
+			"badge": "Heute",
+			"empty": "Noch keine Daten."
+		},
+		"weekly": {
+			"eyebrow": "Konstanz",
+			"title": "Wochenschnitt",
+			"subtitle": "Durchschnittliche Lösungszeit über die letzten 7 Rätsel.",
+			"badge": "7 Tage",
+			"empty": "Noch keine Daten."
+		},
+		"columns": {
+			"rank": "Rang",
+			"player": "Spieler",
+			"time": "Zeit",
+			"avg": "Ø Zeit"
+		},
+		"loading": "Bestenliste wird geladen…",
+		"placementBadge": "Du",
+		"dailySubtitleWithId": "Rätsel #{id}",
+		"noValue": "kein Wert"
+	},
+	"howto": {
+		"title": "So spielst du",
+		"basicsTitle": "Grundlagen",
+		"basics": [
+			"Alle Antworten verlaufen von links nach rechts oder von oben nach unten - niemals diagonal oder rückwärts.",
+			"Mehrwortantworten werden ohne Leerzeichen geschrieben (z. B. steh auf → stehauf).",
+			"Die Hinweise sind kurz und enthalten oft Wortspiele, Abkürzungen oder Kalauer.",
+			"Eigennamen, Slang und Popkultur-Referenzen sind üblich."
+		],
+		"controlsTitle": "Steuerung",
+		"controls": [
+			{ "label": "Pfeiltasten", "text": "Durch das Gitter navigieren" },
+			{ "label": "Backspace", "text": "Aktuelles Feld löschen" },
+			{ "label": "Tab", "text": "Richtung wechseln (waagerecht/senkrecht)" },
+			{ "label": "Maus", "text": "Frage oder zugehörige Gitterzellen markieren" }
+		],
+		"proTipsTitle": "Profi-Tipps",
+		"tips": [
+			{
+				"title": "Nutze Kreuzungen",
+				"body": "Sobald eine Frage gelöst ist, hilft sie bei den kreuzenden Wörtern. Eine richtige Antwort kann mehrere weitere öffnen."
+			},
+			{
+				"title": "Antworten prüfen",
+				"body": "Ein falscher Buchstabe kann das ganze Rätsel kippen. Wenn etwas nicht passt, geh einen Schritt zurück und versuche Alternativen zu finden."
+			},
+			{
+				"title": "Täglich spielen",
+				"body": "Wie jeder Muskel wird auch dein Gehirn mit Übung stärker. Tägliches Spielen schärft deine Fähigkeiten und macht dich schneller."
+			}
+		]
+	},
+	"profile": {
+		"title": "Profil",
+		"welcome": "Willkommen zurück, {name}.",
+		"logout": "Abmelden",
+		"statsTitle": "Deine Statistiken",
+		"guest": "Gast",
+		"joined": "Beigetreten",
+		"lastPlayed": "Zuletzt gespielt",
+		"solved": "Gelöste Rätsel",
+		"currentStreak": "Aktuelle Serie",
+		"bestStreak": "Beste Serie",
+		"days": "Tage",
+		"avg14": "Ø (14 Tage)",
+		"avgOverall": "Ø (gesamt)",
+		"noStats": "Keine Statistiken verfügbar."
+	},
+	"admin": {
+		"title": "Admin",
+		"subtitle": "Geheime Seite für spezielle Aktionen",
+		"tabs": {
+			"builder": "Crossword-Builder",
+			"stats": "Globale Statistiken",
+			"schedule": "Planung"
+		},
+		"noAccess": "Kein Zugang"
+	},
+	"auth": {
+		"login": "Login",
+		"register": "Registrieren",
+		"modalTitleLogin": "Willkommen zurück",
+		"modalTitleRegister": "Mach mit",
+		"modalClose": "Anmeldedialog schließen",
+		"introLogin": "Melde dich an, um weiter Kreuzworträtsel zu lösen.",
+		"introRegister": "Erstelle ein Konto, um deine Statistiken zu verfolgen.",
+		"labels": {
+			"name": "Name",
+			"email": "E-Mail",
+			"password": "Passwort"
+		},
+		"placeholders": {
+			"name": "Gib deinen Namen ein",
+			"email": "Gib deine E-Mail ein",
+			"password": "Gib dein Passwort ein"
+		},
+		"forgotPassword": "Passwort vergessen?",
+		"pleaseWait": "Bitte warten...",
+		"notMember": "Noch kein Mitglied?",
+		"alreadyMember": "Schon Mitglied?",
+		"toggleLogin": "Login",
+		"toggleRegister": "Registrieren",
+		"successLogin": "Login erfolgreich",
+		"successRegister": "Registrierung erfolgreich",
+		"errorMissing": "Bitte alle Pflichtfelder ausfüllen.",
+		"errorEmail": "Bitte eine gültige E-Mail-Adresse eingeben.",
+		"errorFailed": "{action} fehlgeschlagen"
+	},
+	"footer": {
+		"aboutTitle": "Über uns",
+		"aboutText": "Ein tägliches Rätsel hält die Langeweile fern.\nJeden Morgen gibt es ein neues Mini - kurz, unterhaltsam und hoffentlich ein bisschen clever.\nWenn dir meine kleine Rätsel-Ecke gefällt, erzähl gern deinen Freunden davon.",
+		"quickLinks": "Schnellzugriff",
+		"home": "Startseite",
+		"daily": "Tagesrätsel",
+		"archive": "Archiv",
+		"followUs": "Folge uns",
+		"copyright": "© 2025 Minily. Alle Rechte vorbehalten."
+	},
+	"errors": {
+		"profileStats": "Profilstatistiken konnten nicht geladen werden.",
+		"loadDailyLeaderboard": "Die heutige Bestenliste konnte nicht geladen werden.",
+		"loadWeeklyLeaderboard": "Die wöchentliche Bestenliste konnte nicht geladen werden.",
+		"loadLeaderboard": "Bestenliste konnte nicht geladen werden.",
+		"loadCrossword": "Das heutige Kreuzworträtsel konnte nicht geladen werden."
+	},
+	"crossword": {
+		"across": "Waagerecht",
+		"down": "Senkrecht",
+		"gridAriaToday": "Kreuzwortgitter für heute",
+		"gridAria": "Kreuzwortgitter für {date}",
+		"clueListAria": "Kreuzwort-Hinweise",
+		"acrossAria": "Waagerechte Hinweise",
+		"downAria": "Senkrechte Hinweise",
+		"cellAria": "Gitterfeld {row}-{col}",
+		"winnerTitle": "Starke Lösung!",
+		"puzzleId": "Rätsel-ID: {id}",
+		"yourTime": "Deine Zeit",
+		"finishSubtext": "Gut gemacht, das Mini ist gelöst.",
+		"returnText": "Komm morgen für ein neues Rätsel vorbei oder stöbere im Archiv.",
+		"signinTipLabel": "Tipp:",
+		"signinTip": "Melde dich an, um deine Lösungen zu speichern und in der Bestenliste zu erscheinen."
+	}
+}

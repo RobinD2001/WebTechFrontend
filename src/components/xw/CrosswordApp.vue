@@ -1,5 +1,6 @@
 <script setup>
 	import { computed, ref, watch } from "vue";
+	import { useI18n } from "vue-i18n";
 	import Cell from "@/components/xw/Cell.vue";
 	import CluesWrapper from "@/components/xw/CluesWrapper.vue";
 	import WinnerModal from "./WinnerModal.vue";
@@ -26,6 +27,12 @@
 	const puzzleId = computed(() => puzzleInfo.value?.id ?? props.date ?? "unknown");
 	const showWinner = ref(false);
 	const activeClue = ref(null);
+	const { t } = useI18n();
+	const gridAriaLabel = computed(() =>
+		props.date
+			? t("crossword.gridAria", { date: props.date })
+			: t("crossword.gridAriaToday")
+	);
 
 	const { curCell, selectedAcrossId, selectedDownId, updateCellSelection, handleClueSelected } =
 		selection;
@@ -107,9 +114,9 @@
 					<div class="active-clue-slot">
 						<transition name="clue-fade">
 							<div v-if="activeClue" class="active-clue" aria-live="polite">
-								<span class="label">{{
-									activeClue.is_across ? "Across" : "Down"
-								}}</span>
+								<span class="label">
+									{{ activeClue.is_across ? $t("crossword.across") : $t("crossword.down") }}
+								</span>
 								<span class="body">
 									<strong>{{ activeClue.start_number }}.</strong>
 									{{ activeClue.question }}
@@ -126,7 +133,7 @@
 				<BContainer
 					class="xw-board p-3 rounded-4"
 					role="grid"
-					:aria-label="`Crossword grid for ${props.date || 'today'}`">
+					:aria-label="gridAriaLabel">
 					<BRow v-for="(row, rId) in grid" :key="rId" class="g-1" role="row">
 						<BCol v-for="cell in row" :key="cell.col" class="p-0">
 							<Cell

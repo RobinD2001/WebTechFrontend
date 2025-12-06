@@ -1,21 +1,24 @@
 <script setup>
-	import CrosswordApp from "@/components/xw/CrosswordApp.vue";
 	import { computed } from "vue";
+	import { useI18n } from "vue-i18n";
+	import CrosswordApp from "@/components/xw/CrosswordApp.vue";
 	import { formatFriendlyDate, todayIsoString } from "@/utils/date";
 
 	const todayIso = computed(() => todayIsoString());
 	const todayLabel = computed(() => formatFriendlyDate());
+	const { t } = useI18n();
+	const publishedLabel = computed(() => t("dailyPage.published", { date: todayLabel.value }));
 </script>
 
 <template>
 	<BContainer fluid class="daily-page">
 		<section class="hero">
-			<p class="eyebrow">Today's Mini</p>
-			<h1>Crossword of the day</h1>
+			<p class="eyebrow">{{ $t("dailyPage.eyebrow") }}</p>
+			<h1>{{ $t("dailyPage.title") }}</h1>
 		</section>
 
 		<CrosswordApp :date="todayIso" />
-		<div class="muted text-end mb-2em">Published {{ todayLabel }}</div>
+		<div class="muted text-end mb-2em">{{ publishedLabel }}</div>
 	</BContainer>
 </template>
 

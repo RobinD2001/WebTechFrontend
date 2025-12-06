@@ -7,10 +7,12 @@ import BootstrapVue3 from "bootstrap-vue-3";
 import { createApp } from "vue";
 import App from "./App.vue";
 import router from "./router/routes";
+import i18n from "./i18n";
 
 const app = createApp(App);
 
 app.use(router);
 app.use(BootstrapVue3);
+app.use(i18n);
 
 app.mount("#app");

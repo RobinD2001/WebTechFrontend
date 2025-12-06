@@ -1,5 +1,6 @@
 <script setup>
 	import { computed } from "vue";
+	import { useI18n } from "vue-i18n";
 
 	const props = defineProps({
 		variant: { type: String, default: "daily" }, // "daily" or "weekly"
@@ -17,36 +18,40 @@
 		emptyText: { type: String, default: "" },
 	});
 
-	const variantDefaults = {
+	const { t } = useI18n();
+
+	const variantDefaults = computed(() => ({
 		daily: {
-			eyebrow: "Daily sprint",
-			title: "Today's fastest",
-			subtitle: null,
-			badge: "Today",
+			eyebrow: t("leaderboardList.daily.eyebrow"),
+			title: t("leaderboardList.daily.title"),
+			subtitle: t("leaderboardList.daily.subtitle"),
+			badge: t("leaderboardList.daily.badge"),
 			badgeVariant: "primary",
-			emptyText: "No solves recorded yet.",
+			emptyText: t("leaderboardList.daily.empty"),
 			fields: [
-				{ key: "rank", label: "Rank", thStyle: { width: "90px" } },
-				{ key: "player", label: "Player" },
-				{ key: "time", label: "Time" },
+				{ key: "rank", label: t("leaderboardList.columns.rank"), thStyle: { width: "90px" } },
+				{ key: "player", label: t("leaderboardList.columns.player") },
+				{ key: "time", label: t("leaderboardList.columns.time") },
 			],
 		},
 		weekly: {
-			eyebrow: "Consistency",
-			title: "Rolling weekly average",
-			subtitle: "Average solve time across the last 7 puzzles.",
-			badge: "7-day",
+			eyebrow: t("leaderboardList.weekly.eyebrow"),
+			title: t("leaderboardList.weekly.title"),
+			subtitle: t("leaderboardList.weekly.subtitle"),
+			badge: t("leaderboardList.weekly.badge"),
 			badgeVariant: "info",
-			emptyText: "No data yet.",
+			emptyText: t("leaderboardList.weekly.empty"),
 			fields: [
-				{ key: "rank", label: "Rank", thStyle: { width: "90px" } },
-				{ key: "player", label: "Player" },
-				{ key: "avg", label: "Avg Time" },
+				{ key: "rank", label: t("leaderboardList.columns.rank"), thStyle: { width: "90px" } },
+				{ key: "player", label: t("leaderboardList.columns.player") },
+				{ key: "avg", label: t("leaderboardList.columns.avg") },
 			],
 		},
-	};
+	}));
 
-	const resolvedVariant = computed(() => variantDefaults[props.variant] ?? variantDefaults.daily);
+	const resolvedVariant = computed(
+		() => variantDefaults.value[props.variant] ?? variantDefaults.value.daily
+	);
 	const fields = computed(() => resolvedVariant.value.fields);
 
 	const normalizedItems = computed(() => props.items.map(normalizeEntry));
@@ -64,8 +69,8 @@
 	const resolvedSubtitle = computed(() => {
 		if (props.subtitle) return props.subtitle;
 		if (props.variant === "daily") {
-			if (props.puzzleId) return `Puzzle #${props.puzzleId}`;
-			return "Times update as players finish.";
+			if (props.puzzleId) return t("leaderboardList.dailySubtitleWithId", { id: props.puzzleId });
+			return resolvedVariant.value.subtitle || "";
 		}
 		return resolvedVariant.value.subtitle || "";
 	});
@@ -76,11 +81,11 @@
 		() => props.badgeVariant || resolvedVariant.value.badgeVariant || "primary"
 	);
 	const resolvedEmptyText = computed(
-		() => props.emptyText || resolvedVariant.value.emptyText || "No data yet."
+		() => props.emptyText || resolvedVariant.value.emptyText || t("leaderboardList.weekly.empty")
 	);
 
 	function formatSeconds(value) {
-		if (value === null || value === undefined || Number.isNaN(value)) return "no value";
+		if (value === null || value === undefined || Number.isNaN(value)) return t("leaderboardList.noValue");
 		if (typeof value === "string") return value;
 		const totalSeconds = Math.round(Number(value));
 		if (!Number.isFinite(totalSeconds)) return "-";
@@ -107,7 +112,7 @@
 
 	function normalizePlacement(placement) {
 		if (!placement) return null;
-		const player = placement.username ?? placement.user ?? placement.name ?? "You";
+		const player = placement.username ?? placement.user ?? placement.name ?? t("leaderboardList.placementBadge");
 		const rank = placement.rank ?? placement.position ?? placement.place ?? null;
 		const rawTime =
 			placement.time ?? placement.solveTime ?? placement.average ?? placement.avgTime ?? null;
@@ -134,12 +139,12 @@
 
 		<div v-if="loading" class="state">
 			<BSpinner small class="me-2" />
-			<span>Loading leaderboard…</span>
+			<span>{{ $t("leaderboardList.loading") }}</span>
 		</div>
 		<BAlert v-else-if="error" variant="danger" show>{{ error }}</BAlert>
 		<div v-else>
 			<div v-if="resolvedPlacement" class="placement">
-				<BBadge variant="success" class="me-2">You</BBadge>
+				<BBadge variant="success" class="me-2">{{ $t("leaderboardList.placementBadge") }}</BBadge>
 				<span>#{{ resolvedPlacement.rank ?? "—" }} · {{ resolvedPlacement.time }}</span>
 			</div>
 			<BTable

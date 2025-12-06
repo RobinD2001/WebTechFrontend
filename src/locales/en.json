@@ -1,0 +1,201 @@
+{
+	"nav": {
+		"daily": "Daily Puzzle",
+		"archive": "Archive",
+		"leaderboard": "Leaderboard",
+		"howto": "How to play",
+		"signIn": "sign in",
+		"profile": "Profile"
+	},
+	"home": {
+		"eyebrow": "Thinking inside the box allowed",
+		"title": "Daily Mini Crosswords",
+		"tagline": "A fresh Mini every morning. Quick. Clever. Always free.",
+		"playNow": "Play Now",
+		"yesterdayCta": "Yesterday's puzzle →",
+		"loginCta": "Log in to track your stats →",
+		"funFactTitle": "Fun fact of the day",
+		"funFacts": [
+			"The \"Word-Cross\" became \"Cross-Word\" due to a typesetter's error, and the name stuck.",
+			"Arthur Wynne published the first crossword in 1913.",
+			"Monday puzzles are typically the easiest; they get harder through the week."
+		],
+		"yesterdayTitle": "Yesterday's Mini",
+		"yesterdayDescription": "In case you missed it.",
+		"play": "Play →",
+		"randomTitle": "Random Mini",
+		"randomDescription": "A surprise one from the vault."
+	},
+	"preview": {
+		"eyebrow": "Preview",
+		"title": "Today's Mini"
+	},
+	"dailyPage": {
+		"eyebrow": "Today's Mini",
+		"title": "Crossword of the day",
+		"published": "Published {date}"
+	},
+	"archive": {
+		"title": "Find a past Mini",
+		"tagline": "Pick a date to load that day's mini crossword.",
+		"fromLabel": "from:",
+		"load": "Load crossword",
+		"difficulty": "Difficulty",
+		"averageTime": "Average time",
+		"loadedFrom": "Loaded from {date}",
+		"unknown": "unknown"
+	},
+	"leaderboardPage": {
+		"eyebrow": "Community stats",
+		"title": "Leaderboards",
+		"lede": "See today's fastest solvers and the most consistent players this week."
+	},
+	"leaderboardList": {
+		"daily": {
+			"eyebrow": "Daily sprint",
+			"title": "Today's fastest",
+			"subtitle": "Times update as players finish.",
+			"badge": "Today",
+			"empty": "No solves recorded yet."
+		},
+		"weekly": {
+			"eyebrow": "Consistency",
+			"title": "Rolling weekly average",
+			"subtitle": "Average solve time across the last 7 puzzles.",
+			"badge": "7-day",
+			"empty": "No data yet."
+		},
+		"columns": {
+			"rank": "Rank",
+			"player": "Player",
+			"time": "Time",
+			"avg": "Avg Time"
+		},
+		"loading": "Loading leaderboard…",
+		"placementBadge": "You",
+		"dailySubtitleWithId": "Puzzle #{id}",
+		"noValue": "no value"
+	},
+	"howto": {
+		"title": "How to play",
+		"basicsTitle": "Basics",
+		"basics": [
+			"All answers are written left-to-right (across) or top-to-bottom (down) - never diagonally or backwards.",
+			"Multi-word answers are written without spaces (e.g., put on → puton).",
+			"Clues are concise and often include clever wordplay, abbreviations, or puns.",
+			"Proper nouns, slang, and pop culture references are commonly used."
+		],
+		"controlsTitle": "Controls",
+		"controls": [
+			{ "label": "Arrow keys", "text": "Navigate the grid" },
+			{ "label": "Backspace", "text": "Clear the current cell" },
+			{ "label": "Tab", "text": "Switch clue direction (across/down)" },
+			{ "label": "Mouse", "text": "Highlight the clue or its corresponding grid cells" }
+		],
+		"proTipsTitle": "Pro tips",
+		"tips": [
+			{
+				"title": "Use Crossings",
+				"body": "Once you solve a clue, use it to help solve the intersecting words. Just one correct answer can unlock several others."
+			},
+			{
+				"title": "Double-Check Your Answers",
+				"body": "A single incorrect letter can throw off the entire puzzle. If something feels off or forced, take a step back and reassess."
+			},
+			{
+				"title": "Play Every Day",
+				"body": "Like any muscle, your brain gets stronger with regular use. Daily practice sharpens your skills and speeds up your solving."
+			}
+		]
+	},
+	"profile": {
+		"title": "Profile",
+		"welcome": "Welcome back, {name}.",
+		"logout": "Logout",
+		"statsTitle": "Your Stats",
+		"guest": "Guest",
+		"joined": "Joined",
+		"lastPlayed": "Last played",
+		"solved": "Puzzles solved",
+		"currentStreak": "Current streak",
+		"bestStreak": "Best streak",
+		"days": "days",
+		"avg14": "Avg (14 days)",
+		"avgOverall": "Avg (overall)",
+		"noStats": "No stats available."
+	},
+	"admin": {
+		"title": "Admin",
+		"subtitle": "Super secret page to do special stuff",
+		"tabs": {
+			"builder": "Crossword Builder",
+			"stats": "Global stats",
+			"schedule": "Schedule"
+		},
+		"noAccess": "No Access"
+	},
+	"auth": {
+		"login": "Login",
+		"register": "Register",
+		"modalTitleLogin": "Welcome back",
+		"modalTitleRegister": "Join us",
+		"modalClose": "Close authentication dialog",
+		"introLogin": "Log in to continue solving crosswords.",
+		"introRegister": "Create an account to track your stats.",
+		"labels": {
+			"name": "Name",
+			"email": "Email",
+			"password": "Password"
+		},
+		"placeholders": {
+			"name": "Enter your name",
+			"email": "Enter your email",
+			"password": "Enter your password"
+		},
+		"forgotPassword": "Forgot your password?",
+		"pleaseWait": "Please wait...",
+		"notMember": "Not a member yet?",
+		"alreadyMember": "Already a member?",
+		"toggleLogin": "Login",
+		"toggleRegister": "Register",
+		"successLogin": "Login successful",
+		"successRegister": "Register successful",
+		"errorMissing": "Please fill in all required fields.",
+		"errorEmail": "Please enter a valid email address.",
+		"errorFailed": "{action} failed"
+	},
+	"footer": {
+		"aboutTitle": "About Us",
+		"aboutText": "A crossword a day keeps the doctor away.\nI post a new mini every morning - quick, fun, and hopefully a little clever.\nIf you appreciate this little puzzle corner of mine, make sure to tell your friends.",
+		"quickLinks": "Quick Links",
+		"home": "Home",
+		"daily": "Daily Puzzle",
+		"archive": "Archive",
+		"followUs": "Follow Us",
+		"copyright": "© 2025 Minily. All rights reserved."
+	},
+	"errors": {
+		"profileStats": "Failed to load profile stats.",
+		"loadDailyLeaderboard": "Failed to load today's leaderboard.",
+		"loadWeeklyLeaderboard": "Failed to load weekly leaderboard.",
+		"loadLeaderboard": "Failed to load leaderboard.",
+		"loadCrossword": "Could not load today's crossword."
+	},
+	"crossword": {
+		"across": "Across",
+		"down": "Down",
+		"gridAriaToday": "Crossword grid for today",
+		"gridAria": "Crossword grid for {date}",
+		"clueListAria": "Crossword clues",
+		"acrossAria": "Across clues",
+		"downAria": "Down clues",
+		"cellAria": "Grid cell {row}-{col}",
+		"winnerTitle": "Great solve!",
+		"puzzleId": "Puzzle ID: {id}",
+		"yourTime": "Your time",
+		"finishSubtext": "Nice work finishing this mini.",
+		"returnText": "Come back tomorrow for a fresh puzzle or browse older Minis in the archive.",
+		"signinTipLabel": "Tip:",
+		"signinTip": "Sign in to track your solves and appear on the leaderboard."
+	}
+}

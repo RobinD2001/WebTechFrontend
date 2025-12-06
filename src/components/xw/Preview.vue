@@ -1,12 +1,18 @@
 <script setup>
 	import { ref, computed, onMounted } from "vue";
+	import { useRoute } from "vue-router";
+	import { useI18n } from "vue-i18n";
 	import { getXWFromDate } from "@/composables/useXW.js";
 	import { useGridFactory } from "@/composables/xw/useGridFactory";
+	import { DEFAULT_LOCALE } from "@/i18n";
 
 	const today = new Date().toISOString().slice(0, 10);
 	const clues = ref([]);
 	const loading = ref(true);
 	const error = ref(null);
+	const route = useRoute();
+	const locale = computed(() => route.params.locale || DEFAULT_LOCALE);
+	const { t } = useI18n();
 
 	const { grid, gridSize, setGrid } = useGridFactory();
 
@@ -77,7 +83,7 @@
 			setGrid(payload);
 		} catch (e) {
 			console.error(e);
-			error.value = "Could not load today's crossword.";
+			error.value = t("errors.loadCrossword");
 			clues.value = [];
 			setGrid({ size: { rows: 0, cols: 0 }, clueNumbers: [], acrossIds: [], downIds: [] });
 		} finally {
@@ -92,14 +98,14 @@
 	<BContainer class="preview-page">
 		<div class="header">
 			<div>
-				<p class="eyebrow mb-1">Preview</p>
-				<h2 class="mb-0">Today's Mini</h2>
+				<p class="eyebrow mb-1">{{ $t("preview.eyebrow") }}</p>
+				<h2 class="mb-0">{{ $t("preview.title") }}</h2>
 			</div>
 		</div>
 		<div class="grid-wrapper">
 			<router-link
 				class="grid-link"
-				:to="{ name: 'daily' }"
+				:to="{ name: 'daily', params: { locale } }"
 				role="img"
 				:aria-label="`Preview grid for ${today}`">
 				<div
