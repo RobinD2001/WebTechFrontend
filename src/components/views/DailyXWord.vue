@@ -14,10 +14,8 @@
 			<h1>Crossword of the day</h1>
 		</section>
 
-		<BCard class="panel">
-			<div class="muted">Published {{ todayLabel }}</div>
-			<CrosswordApp :date="todayIso" />
-		</BCard>
+		<CrosswordApp :date="todayIso" />
+		<div class="muted text-end mb-2em">Published {{ todayLabel }}</div>
 	</BContainer>
 </template>
 
@@ -28,5 +26,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1.25rem;
+		background-color: transparent;
 	}
 </style>

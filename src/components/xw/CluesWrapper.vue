@@ -9,7 +9,12 @@
 		date: String,
 		grid: Array,
 	});
-	const emit = defineEmits(["gridCalculated", "clueSelected", "crosswordSolved"]);
+	const emit = defineEmits([
+		"gridCalculated",
+		"clueSelected",
+		"crosswordSolved",
+		"activeClueChange",
+	]);
 
 	const clues = ref([]);
 	const clueChecks = ref([]);
@@ -125,6 +130,26 @@
 	function handleClueSelected(payload) {
 		emit("clueSelected", payload);
 	}
+
+	function emitActiveClue() {
+		const isAcross = props.selectedAcrossId != null;
+		const selectedId = isAcross ? props.selectedAcrossId : props.selectedDownId;
+		if (!selectedId) {
+			emit("activeClueChange", null);
+			return;
+		}
+
+		const clue = clues.value.find(
+			(c) => c.start_number === selectedId && c.is_across === isAcross
+		);
+		emit("activeClueChange", clue ?? null);
+	}
+
+	watch(
+		[() => props.selectedAcrossId, () => props.selectedDownId, () => clues.value],
+		() => emitActiveClue(),
+		{ immediate: true, deep: true }
+	);
 </script>
 
 <template>

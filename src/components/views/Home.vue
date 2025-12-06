@@ -36,7 +36,7 @@
 <template>
 	<BContainer fluid class="home">
 		<section class="hero">
-			<p class="eyebrow">v0.192</p>
+			<p class="eyebrow">v1</p>
 			<h1>Daily Mini Crosswords</h1>
 			<p class="tagline">A fresh Mini every morning. Quick. Clever. Always free.</p>
 			<div class="hero-actions">

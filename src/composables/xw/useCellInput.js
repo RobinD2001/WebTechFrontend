@@ -3,13 +3,30 @@ import { ref, computed, watch, nextTick } from "vue";
 export function useCellInput(props, emit) {
 	const inputRef = ref(null);
 
+	const allowedInput = /[A-Za-z0-9]/;
+
+	function sanitizeInput(val) {
+		if (val === "" || val == null) {
+			return { value: "", valid: true };
+		}
+
+		const match = String(val).match(allowedInput);
+		if (!match) {
+			return { value: "", valid: false };
+		}
+
+		return { value: match[0].toUpperCase(), valid: true };
+	}
+
 	const displayValue = computed({
 		get() {
 			return props.cell.value;
 		},
 		set(val) {
 			const prev = props.cell.value;
-			const next = val || "";
+			const { value: next, valid } = sanitizeInput(val);
+			if (!valid) return;
+
 			emit("update:value", next);
 			if (next) {
 				emit("typed", { previous: prev, current: next });
@@ -27,12 +44,16 @@ export function useCellInput(props, emit) {
 	});
 
 	function onBeforeInput(e) {
-		// If full and user types another character, replace the value manually
-		if (props.cell.value && e.data && e.inputType === "insertText") {
+		if (!["insertText", "insertFromPaste"].includes(e.inputType)) return;
+
+		const { value: next, valid } = sanitizeInput(e.data);
+		if (!valid) {
 			e.preventDefault();
-			emit("update:value", e.data);
-			emit("typed", { previous: props.cell.value, current: e.data });
+			return;
 		}
+
+		e.preventDefault();
+		displayValue.value = next;
 	}
 
 	function onKeydown(e) {

@@ -25,6 +25,7 @@
 	const puzzleInfo = ref(null);
 	const puzzleId = computed(() => puzzleInfo.value?.id ?? props.date ?? "unknown");
 	const showWinner = ref(false);
+	const activeClue = ref(null);
 
 	const { curCell, selectedAcrossId, selectedDownId, updateCellSelection, handleClueSelected } =
 		selection;
@@ -92,17 +93,36 @@
 			persistSolveLocally();
 		}
 	}
+
+	function handleActiveClueChange(clue) {
+		activeClue.value = clue;
+	}
 </script>
 
 <template>
 	<BContainer class="mb-5 crossword-shell">
-		<BRow class="justify-content-end mb-2">
-			<BCol cols="auto">
-				<CrosswordTimer :display="timerDisplay" :state="timerClass" />
+		<BRow class="mb-3">
+			<BCol cols="12">
+				<div class="top-line">
+					<div class="active-clue-slot">
+						<transition name="clue-fade">
+							<div v-if="activeClue" class="active-clue" aria-live="polite">
+								<span class="label">{{
+									activeClue.is_across ? "Across" : "Down"
+								}}</span>
+								<span class="body">
+									<strong>{{ activeClue.start_number }}.</strong>
+									{{ activeClue.question }}
+								</span>
+							</div>
+						</transition>
+					</div>
+					<CrosswordTimer class="timer" :display="timerDisplay" :state="timerClass" />
+				</div>
 			</BCol>
 		</BRow>
-		<BRow class="g-4">
-			<BCol id="xw_grid" aria-label="Crossword grid container">
+		<BRow class="g-4 align-items-start">
+			<BCol id="xw_grid" aria-label="Crossword grid container" md="7" lg="7">
 				<BContainer
 					class="xw-board p-3 rounded-4"
 					role="grid"
@@ -122,14 +142,17 @@
 				</BContainer>
 			</BCol>
 
-			<CluesWrapper
-				:selectedDownId="selectedDownId"
-				:selectedAcrossId="selectedAcrossId"
-				:date="props.date"
-				:grid="checkValidation()"
-				@grid-calculated="setGrid"
-				@clueSelected="handleClueSelected"
-				@crosswordSolved="handleCrosswordSolved" />
+			<BCol md="5" lg="5">
+				<CluesWrapper
+					:selectedDownId="selectedDownId"
+					:selectedAcrossId="selectedAcrossId"
+					:date="props.date"
+					:grid="checkValidation()"
+					@activeClueChange="handleActiveClueChange"
+					@grid-calculated="setGrid"
+					@clueSelected="handleClueSelected"
+					@crosswordSolved="handleCrosswordSolved" />
+			</BCol>
 		</BRow>
 	</BContainer>
 	<WinnerModal
@@ -144,6 +167,20 @@
 		background: transparent;
 	}
 
+	.top-line {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		min-height: 68px;
+	}
+
+	.active-clue-slot {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		min-height: 68px;
+	}
+
 	.xw-board {
 		background: var(--card);
 		border: 2px solid var(--border);
@@ -152,5 +189,46 @@
 
 	#xw_grid {
 		min-width: 360px;
+	}
+
+	.active-clue {
+		display: flex;
+		align-items: baseline;
+		gap: 0.65rem;
+		background: var(--card);
+		border: 2px solid var(--border);
+		border-radius: 12px;
+		padding: 0.8rem 1rem;
+		box-shadow: var(--shadow);
+		font-size: 1.05rem;
+		color: var(--accent-strong);
+	}
+
+	.clue-fade-enter-active,
+	.clue-fade-leave-active {
+		transition: all 180ms ease;
+	}
+
+	.clue-fade-enter-from,
+	.clue-fade-leave-to {
+		opacity: 0;
+		transform: translateY(-6px);
+	}
+
+	.timer {
+		margin-left: auto;
+	}
+
+	.active-clue .label {
+		font-family: var(--font-heading);
+		font-weight: 700;
+		text-transform: uppercase;
+		font-size: 0.95rem;
+		color: var(--accent);
+		letter-spacing: 0.02em;
+	}
+
+	.active-clue .body {
+		flex: 1;
 	}
 </style>

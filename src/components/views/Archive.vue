@@ -58,26 +58,22 @@
 		<BCard class="panel">
 			<BForm @submit.prevent="loadPuzzle">
 				<BRow class="gy-2 gx-3 align-items-end">
-					<BCol md="4">
-						<BFormGroup
-							label="Puzzle date"
-							label-for="archive-date"
-							label-class="fw-bold">
-							<BFormInput
-								id="archive-date"
-								type="date"
-								v-model="selectedDate"
-								:max="todayIso"
-								required
-								@blur="handleDateBlur" />
-						</BFormGroup>
+					<BCol md="6" lg="6" class="d-flex align-items-center gap-2">
+						<label class="fw-bold mb-0" for="archive-date">from:</label>
+						<BFormInput
+							id="archive-date"
+							type="date"
+							v-model="selectedDate"
+							:max="todayIso"
+							required
+							@blur="handleDateBlur" />
 					</BCol>
-					<BCol md="3" class="mb-3 mx-3">
+					<BCol md="2" lg="2" class="mb-0 mx-3">
 						<BButton type="submit" variant="primary" class="w-100"
 							>Load crossword</BButton
 						>
 					</BCol>
-					<BCol md="4" class="text-md-end stats mb-3">
+					<BCol md="3" class="text-md-end stats mb-0">
 						<div class="stat">
 							<span class="label">Difficulty</span>
 							<strong>{{ difficulty }}</strong>
@@ -91,14 +87,11 @@
 			</BForm>
 		</BCard>
 
-		<BCard class="panel puzzle-card" v-if="currentPuzzleDate">
-			<div class="header">
-				<div>
-					<p class="muted mb-0">Loaded from {{ currentPuzzleDate }}</p>
-				</div>
-			</div>
-			<CrosswordApp :date="currentPuzzleDate"></CrosswordApp>
-		</BCard>
+		<div class="header"></div>
+		<CrosswordApp :date="currentPuzzleDate"></CrosswordApp>
+		<div>
+			<p class="muted text-end mb-2em">Loaded from {{ currentPuzzleDate }}</p>
+		</div>
 	</BContainer>
 </template>
 

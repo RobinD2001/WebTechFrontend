@@ -59,7 +59,6 @@
 		width: 100%;
 		aspect-ratio: 1 / 1;
 		cursor: pointer;
-		transform: rotate(v-bind("tilt"));
 	}
 
 	.xw-cell-wrapper > div {
@@ -80,7 +79,7 @@
 		cursor: pointer;
 		border: 3px solid var(--accent);
 		border-radius: 10px;
-		background-color: var(--card);
+		background-color: #faf8f2;
 		color: var(--accent-strong);
 		box-shadow: inset 0 0 0 2px rgba(47, 107, 79, 0.08);
 	}
