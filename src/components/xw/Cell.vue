@@ -1,5 +1,8 @@
 <script setup>
 	import { useCellInput } from "@/composables/xw/useCellInput";
+	import { ref } from "vue";
+
+	const tilt = ref(Math.random() * 20 - 10);
 
 	const props = defineProps({
 		cell: {
@@ -56,6 +59,7 @@
 		width: 100%;
 		aspect-ratio: 1 / 1;
 		cursor: pointer;
+		transform: rotate(v-bind("tilt"));
 	}
 
 	.xw-cell-wrapper > div {
@@ -69,6 +73,7 @@
 		font-weight: 800;
 		text-transform: uppercase;
 		padding: 0;
+		padding-top: 0.9rem;
 		text-align: center;
 		font-size: 2.5rem;
 		caret-color: transparent;
