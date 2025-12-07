@@ -20,7 +20,6 @@
 		errorDaily.value = "";
 		try {
 			const { crosswordID, leaderboard, userPlacement } = await getDailyLeaderboard();
-			console.log("Daily:", leaderboard);
 
 			crosswordId.value = crosswordID ?? null;
 			dailyRows.value = leaderboard || [];
@@ -39,7 +38,6 @@
 		errorWeekly.value = "";
 		try {
 			const { leaderboard, userPlacement } = await getWeeklyLeaderboard();
-			console.log("Weekly:", leaderboard);
 			weeklyRows.value = leaderboard || [];
 			weeklyPlacement.value = userPlacement || null;
 		} catch (err) {

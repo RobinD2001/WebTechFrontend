@@ -54,14 +54,14 @@
 		"daily": {
 			"eyebrow": "Sprint",
 			"title": "Tagesbestzeit",
-			"subtitle": "Neue Chancen täglich ab früh um 9.",
+			"subtitle": "Neue Chancen täglich am Morgen.",
 			"badge": "Heute",
 			"empty": "Noch keine Daten."
 		},
 		"weekly": {
 			"eyebrow": "Konstanz",
 			"title": "Wochenschnitt",
-			"subtitle": "Durchschnittliche Lösungszeit über die letzten 7 Rätsel.",
+			"subtitle": "Startet jeden Montag neu.",
 			"badge": "7 Tage",
 			"empty": "Noch keine Daten."
 		},

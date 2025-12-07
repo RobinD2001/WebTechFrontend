@@ -10,16 +10,12 @@ const messages = {
 	de,
 };
 
-export function setupI18n(locale = DEFAULT_LOCALE) {
-	return createI18n({
-		legacy: false,
-		globalInjection: true,
-		locale,
-		fallbackLocale: DEFAULT_LOCALE,
-		messages,
-	});
-}
-
-const i18n = setupI18n();
+const i18n = createI18n({
+	legacy: false,
+	globalInjection: true,
+	locale: DEFAULT_LOCALE,
+	fallbackLocale: DEFAULT_LOCALE,
+	messages,
+});
 
 export default i18n;

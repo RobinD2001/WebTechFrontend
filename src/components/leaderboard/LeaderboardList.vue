@@ -29,7 +29,11 @@
 			badgeVariant: "primary",
 			emptyText: t("leaderboardList.daily.empty"),
 			fields: [
-				{ key: "rank", label: t("leaderboardList.columns.rank"), thStyle: { width: "90px" } },
+				{
+					key: "rank",
+					label: t("leaderboardList.columns.rank"),
+					thStyle: { width: "90px" },
+				},
 				{ key: "player", label: t("leaderboardList.columns.player") },
 				{ key: "time", label: t("leaderboardList.columns.time") },
 			],
@@ -42,7 +46,11 @@
 			badgeVariant: "info",
 			emptyText: t("leaderboardList.weekly.empty"),
 			fields: [
-				{ key: "rank", label: t("leaderboardList.columns.rank"), thStyle: { width: "90px" } },
+				{
+					key: "rank",
+					label: t("leaderboardList.columns.rank"),
+					thStyle: { width: "90px" },
+				},
 				{ key: "player", label: t("leaderboardList.columns.player") },
 				{ key: "avg", label: t("leaderboardList.columns.avg") },
 			],
@@ -54,13 +62,13 @@
 	);
 	const fields = computed(() => resolvedVariant.value.fields);
 
-	const normalizedItems = computed(() => props.items.map(normalizeEntry));
+	const normalizedItems = computed(() =>
+		props.items.map((entry, idx) => normalizeEntry(entry, idx, props.placement))
+	);
 	const displayItems = computed(() => {
 		if (!props.limit || props.limit < 1) return normalizedItems.value;
 		return normalizedItems.value.slice(0, props.limit);
 	});
-
-	const resolvedPlacement = computed(() => normalizePlacement(props.placement));
 
 	const resolvedTitle = computed(
 		() => props.title || resolvedVariant.value.title || "Leaderboard"
@@ -69,7 +77,8 @@
 	const resolvedSubtitle = computed(() => {
 		if (props.subtitle) return props.subtitle;
 		if (props.variant === "daily") {
-			if (props.puzzleId) return t("leaderboardList.dailySubtitleWithId", { id: props.puzzleId });
+			if (props.puzzleId)
+				return t("leaderboardList.dailySubtitleWithId", { id: props.puzzleId });
 			return resolvedVariant.value.subtitle || "";
 		}
 		return resolvedVariant.value.subtitle || "";
@@ -81,11 +90,13 @@
 		() => props.badgeVariant || resolvedVariant.value.badgeVariant || "primary"
 	);
 	const resolvedEmptyText = computed(
-		() => props.emptyText || resolvedVariant.value.emptyText || t("leaderboardList.weekly.empty")
+		() =>
+			props.emptyText || resolvedVariant.value.emptyText || t("leaderboardList.weekly.empty")
 	);
 
 	function formatSeconds(value) {
-		if (value === null || value === undefined || Number.isNaN(value)) return t("leaderboardList.noValue");
+		if (value === null || value === undefined || Number.isNaN(value))
+			return t("leaderboardList.noValue");
 		if (typeof value === "string") return value;
 		const totalSeconds = Math.round(Number(value));
 		if (!Number.isFinite(totalSeconds)) return "-";
@@ -99,28 +110,16 @@
 			: `${minutes}:${pad(seconds)}`;
 	}
 
-	function normalizeEntry(entry, idx) {
+	function normalizeEntry(entry, idx, usr) {
 		const rank = entry?.rank ?? idx + 1;
 		const player = entry?.username;
 		const rawTime = props.variant === "weekly" ? entry?.averageTime : entry?.time;
 		const formattedTime = formatSeconds(rawTime);
+		const isUser = rank == usr?.rank;
 
 		return props.variant === "weekly"
-			? { rank, player, avg: formattedTime }
-			: { rank, player, time: formattedTime };
-	}
-
-	function normalizePlacement(placement) {
-		if (!placement) return null;
-		const player = placement.username ?? placement.user ?? placement.name ?? t("leaderboardList.placementBadge");
-		const rank = placement.rank ?? placement.position ?? placement.place ?? null;
-		const rawTime =
-			placement.time ?? placement.solveTime ?? placement.average ?? placement.avgTime ?? null;
-		return {
-			player,
-			rank,
-			time: formatSeconds(rawTime),
-		};
+			? { rank, player, avg: formattedTime, isUser }
+			: { rank, player, time: formattedTime, isUser };
 	}
 </script>
 
@@ -143,10 +142,6 @@
 		</div>
 		<BAlert v-else-if="error" variant="danger" show>{{ error }}</BAlert>
 		<div v-else>
-			<div v-if="resolvedPlacement" class="placement">
-				<BBadge variant="success" class="me-2">{{ $t("leaderboardList.placementBadge") }}</BBadge>
-				<span>#{{ resolvedPlacement.rank ?? "—" }} · {{ resolvedPlacement.time }}</span>
-			</div>
 			<BTable
 				:items="displayItems"
 				:fields="fields"
@@ -154,7 +149,14 @@
 				responsive
 				striped
 				head-variant="light"
-				class="mb-0 board-table" />
+				class="mb-0 board-table">
+				<template #cell(rank)="data">
+					<span>{{ data.item.rank }}</span>
+					<BBadge v-if="data.item.isUser" variant="success" pill class="ms-2">{{
+						$t("leaderboardList.placementBadge")
+					}}</BBadge>
+				</template>
+			</BTable>
 			<p v-if="!displayItems.length" class="muted text-center my-3">
 				{{ resolvedEmptyText }}
 			</p>

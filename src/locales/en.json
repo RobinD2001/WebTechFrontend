@@ -54,14 +54,14 @@
 		"daily": {
 			"eyebrow": "Daily sprint",
 			"title": "Today's fastest",
-			"subtitle": "Times update as players finish.",
+			"subtitle": "New chances every morning.",
 			"badge": "Today",
 			"empty": "No solves recorded yet."
 		},
 		"weekly": {
 			"eyebrow": "Consistency",
-			"title": "Rolling weekly average",
-			"subtitle": "Average solve time across the last 7 puzzles.",
+			"title": "League of the week",
+			"subtitle": "Starting every monday.",
 			"badge": "7-day",
 			"empty": "No data yet."
 		},

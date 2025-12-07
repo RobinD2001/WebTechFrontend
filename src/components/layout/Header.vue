@@ -16,7 +16,7 @@
 		if (Array.isArray(param)) return param[0] || DEFAULT_LOCALE;
 		return param || DEFAULT_LOCALE;
 	});
-	const localeValue = computed(() => locale.value || DEFAULT_LOCALE);
+	const localeValue = computed(() => String(locale.value || DEFAULT_LOCALE));
 	const locales = SUPPORTED_LOCALES;
 	const localeFlags = {
 		en: "🇬🇧",

@@ -1,7 +1,15 @@
+import i18n from "@/i18n";
+
+function getLocaleHeader() {
+	const locale = i18n?.global?.locale?.value || "en";
+	return { "X-Locale": locale };
+}
+
 async function apiRequest(path, options = {}) {
 	const res = await fetch(path, {
 		headers: {
 			"Content-Type": "application/json",
+			...getLocaleHeader(),
 			...(options.headers || {}),
 		},
 		...options,
