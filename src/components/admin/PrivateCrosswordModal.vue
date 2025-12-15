@@ -1,6 +1,6 @@
 <script setup>
 	import { ref, computed, onMounted, watch } from "vue";
-	import { getPrivateXWs, updateCrossword, getXWFromDate } from "@/composables/useXW";
+	import { getPrivateXWs, updateCrossword, getXWFromId } from "@/composables/useXW";
 	import { useGridFactory } from "@/composables/xw/useGridFactory";
 	import { buildGridPayloadFromClues, emptyGridPayload } from "@/utils/clueGrid";
 
@@ -78,20 +78,42 @@
 			return;
 		}
 
-		previewLoading.value = true;
-		previewError.value = null;
-		try {
-			clues.value = await getXWFromDate(selectedCrossword.value.release_date);
-			const payload = buildGridPayloadFromClues(clues.value);
-			setGrid(payload);
-		} catch (err) {
-			console.error(err);
-			previewError.value = "Could not load preview.";
+		const id = selectedCrossword.value.id;
+		if (!id) {
 			clues.value = [];
 			setGrid(emptyGridPayload());
-		} finally {
-			previewLoading.value = false;
+			return;
 		}
+
+		previewLoading.value = true;
+		previewError.value = null;
+		let loaded = false;
+		let lastError = null;
+
+		try {
+			const fetched = await getXWFromId(id);
+			clues.value = fetched;
+			console.warn(fetched);
+
+			const payload = buildGridPayloadFromClues(clues.value);
+			setGrid(payload);
+			loaded = true;
+		} catch (err) {
+			lastError = err;
+		}
+
+		if (!loaded) {
+			if (lastError) {
+				console.error("Failed to load preview", lastError);
+				previewError.value = "Could not load preview.";
+			} else {
+				previewError.value = "No clues found for this crossword.";
+			}
+			clues.value = [];
+			setGrid(emptyGridPayload());
+		}
+
+		previewLoading.value = false;
 	}
 
 	watch(selectedId, loadPreviewForSelected);
@@ -148,7 +170,7 @@
 				</div>
 				<div v-else>
 					<div v-if="previewError" class="text-danger small mb-2">{{ previewError }}</div>
-					<div v-if="!grid.length" class="text-muted small">
+					<div v-if="!grid.length && !previewError" class="text-muted small">
 						Select a crossword to preview.
 					</div>
 					<div

@@ -51,6 +51,11 @@ export async function getXWFromDate(date) {
 	return clues.clues;
 }
 
+export async function getXWFromId(id) {
+	const clues = await apiGet(`/api/crosswords/get?id=${id}`);
+	return clues.clues;
+}
+
 export async function getPrivateXWs() {
 	const list = await apiGet("/api/crosswords/get/private");
 	return list.crosswords;
