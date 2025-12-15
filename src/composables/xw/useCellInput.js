@@ -3,7 +3,8 @@ import { ref, computed, watch, nextTick } from "vue";
 export function useCellInput(props, emit) {
 	const inputRef = ref(null);
 
-	const allowedInput = /[A-Za-z0-9]/;
+	// Allow ASCII letters/numbers plus German umlauts/ß
+	const allowedInput = /[A-Za-z0-9\u00c4\u00d6\u00dc\u00e4\u00f6\u00fc\u00df]/u;
 
 	function sanitizeInput(val) {
 		if (val === "" || val == null) {
